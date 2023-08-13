@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://onenight-35b3.restdb.io/assets/js/eventsource.min.js"></script>
+    <script src="https://onenight-35b3.restdb.io/rest/_jsapi.js?plainjs=true"></script>
+    <title>One Night</title>
+</head>
+
+<body>
+    <h1>One Night</h1>
+    <p id="gameIdDisplay"></p>
+
+    <div id="instructionsAndKickoffScreen" style="display:block">
+        <p id="instructions" style="visibility:visible">Instructions: create or join a game</p>
+        <button id="gameCreateButton" onclick="createGame()">Create Game</button>
+        &nbsp;&nbsp;&nbsp;
+        <button id="gameJoinButton" onclick="joinGame()">Join Game</button>
+    </div>
+
+    <span id="createGameScreen" style="display:none">
+        Num Players: <input id="numPlayersInput" type="number" min="3" max="7" value="3">
+        <br />
+        Name: <input id="createNameInput">
+        <br />
+
+        <button id="startGame" onclick='(function(){ startGame(true); })();'>Start Game</button>
+        <button id="newPlayerCheckButton" onclick='(function(){ addRolesToPlayers(); })();'>Check For New Players</button>
+    </span>
+
+    <span id="joinGameScreen" style="display:none">
+        Game ID: <input id="gameIdInput" type="number" min="1000" max="1000000">
+        <br />
+        Name: <input id="joinNameInput">
+        <br />
+        <button id="startGame" onclick='(function(){ startGame(false); })();'>Start Game</button>
+
+    </span>
+
+    <span id="initialCard" style="display:block">
+    </span>
+
+    <!-- for local development use ./script.js --!>
+    <!-- script src="./script.js" /script --!>
+
+    <!-- for remote development use /one_night/script.js --!>
+    <script src="/one_night/script.js"></script>
+</body>
+
+</html>

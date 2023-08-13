@@ -1,0 +1,464 @@
+var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay;
+var gameId, numPlayers, name, db, roleObjs, gPlayerId;
+var gInitialCardDisplayed = false;
+const assignedRoleObjs = [];
+const dbApiCorsKey = "5f0536bca529a1752c476e9a";
+const baseTableUrl = "https://onenight-35b3.restdb.io/rest";
+const windowQs = window.location.search;
+const urlParams = new URLSearchParams(windowQs);
+
+function setupVars() {
+  instructionsAndKickoffScreen = document.getElementById("instructionsAndKickoffScreen");
+  createGameScreen = document.getElementById("createGameScreen");
+  joinGameScreen = document.getElementById("joinGameScreen");
+  gameIdDisplay = document.getElementById("gameIdDisplay");
+  gameIdInput = document.getElementById("gameIdInput");
+  numPlayersInput = document.getElementById("numPlayersInput");
+}
+
+function currentTimestamp() {
+  return Math.round(Date.now() / 1000);
+}
+
+function generateGame(startedAt = currentTimestamp()) {
+  return {
+    "numPlayers": numPlayers,
+    "startedAt": startedAt,
+  };
+}
+
+function generatePlayer(gameId) {
+  name = nameInput.value;
+  return {
+    "gameId": gameId,
+    "name": name,
+  };
+}
+
+function select(tableName, filter, callback, badcallback) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status >= 200 && this.status < 300) {
+        if (callback) {
+          callback(this.responseText);
+        }
+      } else {
+        if (badcallback) {
+          badcallback(this);
+        }
+      }
+    }
+  };
+
+  var stringifiedFilter = JSON.stringify(filter);
+  xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${stringifiedFilter}`, true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
+  console.log(`Looking '${tableName}' Record where: ${stringifiedFilter}...`);
+  xhttp.send();
+}
+
+/*
+ * curl -i -H "Accept: application/json" -H "Content-Type: application/json" -H "x-apikey: ${API_KEY}" -X POST "https://onenight-35b3.restdb.io/rest/games" -d "{\"numPlayers\": 4, \"startedAt\": ${timestamp}}"
+ * HTTP/1.1 201 Created
+ * {"_id":"5f054d23498ad768000701ae","numPlayers":4,"startedAt":1594182936,"id":1004,"_created":"2020-07-08T04:35:47.785Z","_changed":"2020-07-08T04:35:47.785Z","_createdby":"api","_changedby":"api","_keywords":["api","1594182936","1004"],"_tags":"api 1594182936 1004","_version":0}
+ */
+function insert(tableName, data, callback, badcallback) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status >= 200 && this.status < 300) {
+        if (callback) {
+          callback(this.responseText);
+        }
+      } else {
+        if (badcallback) {
+          badcallback(this);
+        }
+      }
+    }
+  };
+
+  xhttp.open("POST", `${baseTableUrl}/${tableName}`, true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
+  var stringifiedData = JSON.stringify(data);
+  console.log(`Generating New '${tableName}' Record: ${stringifiedData}...`);
+  xhttp.send(stringifiedData);
+}
+
+/*
+ * need the _id of the row we're updating...
+ *
+ * export ROW_ID="5f079e1e498ad76800076903"
+ * export API_KEY="..."
+ * curl -i -H "Accept: application/json" -H "Content-Type: application/json" -H "x-apikey: ${API_KEY}" -X PATCH "https://onenight-35b3.restdb.io/rest/players/${ROW_ID}" -d "{\"roleKey\": \"Revealer\"}"
+ */
+function update(tableName, rowId, data, callback, badcallback) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status >= 200 && this.status < 300) {
+        if (callback) {
+          callback(this.responseText);
+        }
+      } else {
+        if (badcallback) {
+          badcallback(this);
+        }
+      }
+    }
+  };
+
+  xhttp.open("PUT", `${baseTableUrl}/${tableName}/${rowId}`, true);
+  xhttp.setRequestHeader("Content-Type", "application/json");
+  xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
+  var stringifiedData = JSON.stringify(data);
+  console.log(`Updating '${tableName}' Record(${rowId}) with ${stringifiedData}...`);
+  xhttp.send(stringifiedData);
+}
+
+function handleGameInsert(res) {
+  var gameRecord = JSON.parse(res);
+  gameRecordId = gameRecord["_id"];
+  gameId = gameRecord.id;
+  var linkOfGameId = gameId.toString().link(`${window.location}?gameId=${gameId}`)
+  gameIdDisplay.innerHTML = linkOfGameId;
+
+  //console.log(`-> AFTER response: ${res}; "id" (not _id): ${gameId}; tbd: add player to players table...`);
+  console.log(`new Game: ${gameId}; get all roles, then assign the dealer's role...`);
+  select("roles", {
+    "assignable": true
+  }, setupRoles);
+}
+
+// thx to: https://javascript.info/task/shuffle
+// modifies input array!
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+
+    // swap elements array[i] and array[j]
+    // we use "destructuring assignment" syntax to achieve that
+    // you'll find more details about that syntax in later chapters
+    // same can be written as:
+    // let t = array[i]; array[i] = array[j]; array[j] = t
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function _reCacheRandomRoles(res) {
+  var gameRecords = JSON.parse(res);
+  var gameRecord = gameRecords[0];
+  gameRecordId = gameRecord["_id"];
+  roleObjs = gameRecord["randomRoles"];
+  var role = roleObjs.shift();
+  assignedRoleObjs.push({
+    [name]: role
+  });
+  // fill rest of assignedRoleObjs by doing a select of the players table, where gameId = gameId and name & roleKey are not null
+}
+
+// only run this if you know what you're doing
+function _fetchRandomRoles() {
+  select("games", {
+    "gameId": gameId
+  }, _reCacheRandomRoles);
+  //select("games", gameRecordId, {randomRoles: roleObjs}); // set it and forget it
+}
+
+function setupRoles(res) {
+  var values = JSON.parse(res);
+  shuffle(values); // roles.random
+  const roles = values.slice(0, numPlayers); // limit(numPlayers)
+  const keys = roles.map((obj, i) => ("roleKey"));
+  roleObjs = keys.map((obj, i) => ({
+    [obj]: roles[i]["key"]
+  }));
+  update("games", gameRecordId, {
+    randomRoles: roleObjs
+  }); // set it and forget it
+
+  insert("players", generatePlayer(gameId), savePlayerIdAndDealRole(name));
+
+  /*
+    // EACH computer should know the "playerId"
+    // the dealer will assign all roles to each player (w/o seeing what they are)
+    // make a separate functino to assign a role...
+    // tbd: lookup these if the game already exists...
+    var role = roleObjs.shift();
+
+    assignedRoleObjs.push({
+        [name]: role
+    });
+
+  // console.log(`saved random roleObjs: ${JSON.stringify(roleObjs)} from res (${res}). Inserting current player (/dealer) with the first random role: ${role}...`);
+    console.log(`saved random roleObjs: ${JSON.stringify(roleObjs)}. Inserting current player (/dealer) with the first random role: ${JSON.stringify(role)}...`);
+
+    insert("players", { ...role,
+        ...generatePlayer(gameId)
+    }, savePlayerId); //logQueryResult);
+    */
+}
+
+function savePlayerIdAndDealRole(playerName=name) {
+  var cb = (res) => { dealRoleTo(playerName); };
+
+  return (res) => {
+    savePlayerId(res, cb);
+  }
+}
+
+function logQueryResult(res) {
+  console.log(` --> [logQueryResult]: res: ${res}...`);
+}
+
+function savePlayerId(res, cb) {
+  var player = JSON.parse(res);
+  gPlayerId = player._id
+  console.log(` --> [saving Player Id]: player: ${res}...`);
+  if(cb) cb();
+}
+
+/*
+function displayMyRole(roleKey) {
+}
+*/
+
+function displayRole(roleKey) {
+  if (! gInitialCardDisplayed) {
+    select("Roles", {"key": roleKey}, (res) => {
+      if (res.length === 0) {
+      } else {
+        console.log(`role for roleKey(${roleKey}): ${res}`)
+        var objs = JSON.parse(res);
+        var obj = objs[0];
+        var imageId = obj["front"][0];
+        console.log(`https://onenight-35b3.restdb.io/media/${imageId}?s=w`)
+        var img = document.createElement("img");
+        img.src = `https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
+        var src = document.getElementById("initialCard");
+        src.appendChild(img);
+        gInitialCardDisplayed = true;
+      }
+    }
+    )
+  }
+}
+
+/*
+ var role = roleObjs.shift();
+
+ assignedRoleObjs.push({
+   [name]: role
+ });
+
+ console.log(`saved random roleObjs: ${JSON.stringify(roleObjs)}. Inserting current player (/dealer) with the first random role: ${JSON.stringify(role)}...`);
+
+ insert("players", { ...role,
+   ...generatePlayer(gameId)
+ }, savePlayerId); //logQueryResult);
+ */
+function dealRoleTo(somePlayerName) {
+  console.log(`randomly assign a role to player named: ${somePlayerName}...`);
+  select("players", {
+    "gameId": gameId,
+    "name": somePlayerName,
+    "roleKey": {"$exists": false}
+  }, appendRoleToFirstPlayer);
+}
+
+function playerHasARole(roleObjAssignment, playerName) {
+  if (typeof (roleObjAssignment[playerName]) == 'undefined' || roleObjAssignment[playerName] == null) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function roleAssignedTo(playerName) {
+  return assignedRoleObjs.some((obj) => {
+    return playerHasARole(obj, playerName)
+  }); // not sure the retun here is needed
+}
+
+function removeRoleAssignmentFor(playerName) {
+  var idx = assignedRoleObjs.findIndex((obj) => {
+    return playerHasARole(obj, playerName)
+  }); // SURE the retun here IS needed
+  if (idx > -1) {
+    roleObjs.unshift(assignedRoleObjs[idx][playerName]);
+    assignedRoleObjs.splice(idx, 1);
+    console.log(`Removed assigned role for player '${playerName}'.`);
+  } else {
+    console.error(`*** Failed to remove assigned role for player '${playerName}' ***`);
+  }
+}
+
+function appendRoleToPlayers(res, cbBuilder=null) {
+  var playerRecords = JSON.parse(res);
+  console.log(`playerRecords: ${playerRecords}`);
+  appendRoleToPlayer(playerRecords, playerRecords.length, 0, cbBuilder)
+}
+
+function appendRoleToFirstPlayer(res) {
+  var playerRecords = JSON.parse(res);
+  var playerRecord = playerRecords[0];
+  appendRoleToPlayer([playerRecord], 1, 0);
+}
+
+function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
+  var playerRecord = playerRecords[idx];
+  console.log(`playerRecords[${idx}]: ${playerRecord}`);
+  var playerName = playerRecord["name"];
+  var cb;
+
+  if (roleAssignedTo(playerName)) {
+    console.error(`Player '${playerName}' already has an assigned role.`);
+  } else {
+    console.log(`unassignedRoles: ${JSON.stringify(roleObjs)}, assignedRoles: ${JSON.stringify(assignedRoleObjs)}`);
+    var roleObj = roleObjs.shift();
+    assignedRoleObjs.push({
+      [playerName]: roleObj
+    });
+    var defaultCallback = getRoleDisplayer(roleObj);
+    console.log(`Got player row (${JSON.stringify(playerRecord)}), now assigning random role: ${JSON.stringify(roleObj)}...`);
+    // a single-line-if goes ahead of the command, in Javascript: if(true) console.log("got true");
+    if (cbBuilder) { cb = cbBuilder(playerRecords, ct, idx); };
+    var callbackChain = (res) => {
+      defaultCallback(res);
+      if(cb) { cb(res); };
+    };
+
+    update("players",
+      playerRecord["_id"],
+      {
+        name: playerName,
+        gameId: gameId,
+        ...roleObj
+      },
+      callbackChain,
+      (res) => {
+        removeRoleAssignmentFor(playerName)
+      }
+    );
+  }
+}
+
+function getRoleDisplayer(roleObj) {
+  var role = roleObj["roleKey"]
+  console.log(`preparing callback with displayRole using role: ${role}`);
+  return (res) => {
+    console.log(`running callback around displayRole with role: ${role}`)
+    displayRole(role);
+  };
+}
+
+function addRolesToPlayers() {
+  select(
+    "players",
+    {
+      "gameId": gameId,
+      "name": {"$exists": true},
+      "roleKey": {"$exists": false}
+    },
+    (res) => {
+      if (res.length === 0) {
+        console.log(`res IS EMPTY: ${res}`);
+        sleepThenAddRolesToPlayers()
+      } else {
+        console.log(`res IS FULL: ${res}`);
+        appendRoleToPlayers(res, appendRoleToNextPlayer)
+      }
+    }
+  ); //appendRoleToNextPlayer creates the loop...
+}
+
+function startGame(doCreate = false) {
+  name = nameInput.value;
+  gameId = gameIdInput.value;
+
+  if (doCreate) {
+    numPlayers = numPlayersInput.value;
+    console.log(`Start a new ${numPlayers} player game as name: ${name} -- No-gameId: ${gameId} (yet)...`);
+    insert("games", generateGame(), handleGameInsert);
+  } else {
+    numPlayers = null;
+    console.log(`JoinGame (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}...`);
+    insert("players", generatePlayer(gameId), savePlayerId); //logQueryResult); // should we alert the dealer ?!
+  }
+}
+
+function createGame() {
+  setupVars();
+  nameInput = document.getElementById("createNameInput");
+
+  remove(instructionsAndKickoffScreen);
+  display(createGameScreen);
+}
+
+// https://www.sitepoint.com/get-url-parameters-with-javascript/
+function joinGame(gameId) {
+  setupVars();
+  if (typeof (gameId) != 'undefined' && gameId != null) {
+    gameIdInput.value = gameId;
+  }
+  nameInput = document.getElementById("joinNameInput");
+
+  remove(instructionsAndKickoffScreen);
+  display(joinGameScreen);
+}
+
+function show(el) {
+  el.style.visibility = 'visible';
+}
+
+function hide(el) {
+  el.style.visibility = 'hidden';
+}
+
+function display(el) {
+  el.style.display = 'inline';
+}
+
+function remove(el) {
+  el.style.display = 'none';
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function sleepThenAddRolesToPlayers() {
+  logQueryResult("----> SLEEP before trying to sleepThenAddRolesToPlayers()...");
+  await sleep(3000);
+  logQueryResult(" ....NOW, trying to sleepThenAddRolesToPlayers()...");
+  addRolesToPlayers();
+}
+
+// FIXME: change loop to compare # of roles in the game w/ number of rows in player table for this gameId, that HAVE a name & role defined...
+function appendRoleToNextPlayer(playerRecords, ct, idx) {
+  if ((ct > 0) && ((idx + 1) <= ct) && (playerRecords[idx + 1])) {
+    return (res) => {
+      console.log(`** appendingRoleToPlayer #${idx + 1}/${ct}: ${JSON.stringify(playerRecords[idx + 1])} **`);
+      appendRoleToPlayer(playerRecords, ct, idx + 1, sleepThenAddRolesToPlayers); // re-query
+    };
+  } else {
+    // check if we're ready to start the game or re-query...
+    if (roleObjs.length > 0) {
+      console.log(`*** (${roleObjs.length}) More Roles to assign; last player so far was: #${idx}/${ct} ***`);
+      //addRolesToPlayers();
+      sleepThenAddRolesToPlayers();
+    } else {
+      console.log(`***** Ready to start game, reached player #${idx}/${ct} *****`);
+    }
+    return null;
+  }
+}
+
+gameId = urlParams.get('gameId');
+if (typeof (gameId) != 'undefined' && gameId != null) {
+  console.log("automatically advancing to Join Game Screen (to get the player's Name before calling StartGame)...");
+  joinGame(gameId);
+}

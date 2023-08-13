@@ -1,0 +1,61 @@
+- [ ] One night
+	- [ ] first page
+		- [ ] create NEW Game
+		- [ ] join Existing Game
+	- [ ] second page (after Create NEW Game)
+		- [ ] create Game (not start Game), no "Check for New Players" till game Id exists...
+	- [ ] after Create Game (tell how many players are _in_ the game ...to know when to "start")
+	- [ ] check for new players should just  update the screen with the 'backside' of each of the other players' cards
+	- [ ] each non-host user's screen should poll the db to see when it starts
+	- [ ] when start game (to start for everyone)
+		- [ ] db needs a flag to indicate start
+			- [ ] other users systems stop polling for users...; maybe see a "ready" message
+		- [ ] at which point
+			- [ ] positions table (per gameId): p1, p2, p3, c1, c2, c3,dw
+			- [ ] deal the 3 center cards (plus dream wolf) to their positions (a db-table needed)
+			- [ ] use join-timestamps  to know the order of the players around the table...
+		- [ ] each player's screen should poll for a representation of each card's back & position
+		- [ ] each player's screen should poll for messages...
+		- [ ] messages table tied to gameId and playerIds (all message are "to" a player)
+				- [ ] order: 1, 2, 3...
+			- [ ] flags:
+				- [ ] viewed
+		- [ ] phase0: wait for everyone to verify they looked at their card... (perhaps a message in the table for everyone)
+		- [ ] phase1: wolves wake-up
+			- [ ] store messages for both wolves (or the one wolf saying you're alone); or do nothing
+		- [ ] phase done check
+			- [ ] any messages from that phase?
+				- [ ] no => move-on
+				- [ ] yes => are they checked?
+					- [ ] yes move-on
+					- [ ] no loop
+		- [ ] host computer also has to poll for messages to see if they have to go?
+		- [ ] witch wake-up
+			- [ ] if no witch: goto next phase
+			- [ ] if witch: send message
+				- [ ] witch updates player positions &/ views card and then clicks "done" on the message
+			- [ ] if done: goto next phase
+			- [ ] if not done: check again...
+		- [ ] at start of your turn get a refresh of where every card is (as part of polling for messages)
+		- [ ] at end of your turn send all positions of cards to db, when you check "done"
+	- [ ] actions:
+		- [ ] show card (face-up)
+		- [ ] look at card
+		- [ ] move card
+		- [ ] view curation token
+		- [ ] curate card (put token on top)
+	- [ ] any message with NO playerId goes to all players (?)
+		- [ ] help w/ communication after the game
+		- [ ] vote button
+		- [ ] X
+
+
+		- [ ] Future: wake-up when it's not your turn
+		- [ ] Does receiving a message need to come with "permissions": (not in v1)
+			- [ ] read-a-player-card
+			- [ ] read-center-card
+			- [ ] read-n-player-cards
+			- [ ] move-card
+			- [ ] move-n-cards
+			- [ ] show-card-in-position-x
+			- [ ] 
