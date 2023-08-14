@@ -250,6 +250,7 @@ function displayRole(roleKey) {
 
 /*
  var role = roleObjs.shift();
+ document.getElementById("cardName").innerHTML = JSON.stringify(role); 
 
  assignedRoleObjs.push({
    [name]: role
