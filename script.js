@@ -250,7 +250,7 @@ function displayRole(roleKey) {
 
 /*
  var role = roleObjs.shift();
- document.getElementById("cardName").innerHTML = JSON.stringify(role); 
+  
 
  assignedRoleObjs.push({
    [name]: role
@@ -350,6 +350,9 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
 
 function getRoleDisplayer(roleObj) {
   var role = roleObj["roleKey"]
+  console.log("about to add role");
+  document.getElementById("cardName").innerHTML = JSON.stringify(role);
+  console.log("supposedly added role");
   console.log(`preparing callback with displayRole using role: ${role}`);
   return (res) => {
     console.log(`running callback around displayRole with role: ${role}`)
