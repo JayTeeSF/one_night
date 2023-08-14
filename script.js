@@ -378,6 +378,7 @@ function addRolesToPlayers() {
 
 function startGame(doCreate = false) {
   showCards();
+  console.log("called show cards");
   name = nameInput.value;
   gameId = gameIdInput.value;
 
@@ -401,6 +402,7 @@ function createGame() {
 }
 
 function showCards() {
+  console.log("inside show cards")
   setupVars();
   remove(createGameScreen);
   display(displayCardScreen);
