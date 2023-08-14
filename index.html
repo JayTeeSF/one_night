@@ -15,9 +15,9 @@
 
     <div id="instructionsAndKickoffScreen" style="display:block">
         <p id="instructions" style="visibility:visible">Instructions: create or join a game</p>
-        <button id="gameCreateButton" onclick="createGame()">Create Game</button>
+        <button id="gameCreateButton" onclick="createGame()">Create New Game</button>
         &nbsp;&nbsp;&nbsp;
-        <button id="gameJoinButton" onclick="joinGame()">Join Game</button>
+        <button id="gameJoinButton" onclick="joinGame()">Join Existing Game</button>
     </div>
 
     <span id="createGameScreen" style="display:none">
@@ -26,7 +26,7 @@
         Name: <input id="createNameInput">
         <br />
 
-        <button id="startGame" onclick='(function(){ startGame(true); })();'>Start Game</button>
+        <button id="startGame" onclick='(function(){ startGame(true); })();'>Create Game</button>
         <button id="newPlayerCheckButton" onclick='(function(){ addRolesToPlayers(); })();'>Check For New Players</button>
     </span>
 
@@ -35,7 +35,7 @@
         <br />
         Name: <input id="joinNameInput">
         <br />
-        <button id="startGame" onclick='(function(){ startGame(false); })();'>Start Game</button>
+        <button id="startGame" onclick='(function(){ startGame(false); })();'>Join Game</button>
 
     </span>
 
