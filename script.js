@@ -376,8 +376,8 @@ function addRolesToPlayers() {
   ); //appendRoleToNextPlayer creates the loop...
 }
 
-function startGame(doCreate = false) {
-  showCards();
+function startGame(doCreate = false, screen) {
+  showCards(screen);
   console.log("called show cards");
   name = nameInput.value;
   gameId = gameIdInput.value;
@@ -401,10 +401,14 @@ function createGame() {
   display(createGameScreen);
 }
 
-function showCards() {
+function showCards(screen) {
   console.log("inside show cards")
   setupVars();
-  remove(createGameScreen);
+  if (screen == "Create") {
+    remove(createGameScreen);
+  } else {
+    remove(joinGameScreen);
+  }
   display(displayCardScreen);
 }
 
