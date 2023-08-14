@@ -237,10 +237,10 @@ function displayRole(roleKey) {
         var obj = objs[0];
         var imageId = obj["front"][0];
         console.log(`https://onenight-35b3.restdb.io/media/${imageId}?s=w`)
-        var img = document.createElement("img");
-        img.src = `https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
+        //var img = document.createElement("img");
+        //img.src = `https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
         var cardImage = document.getElementById("cardImage");
-        cardImage.src=`https://onenight-35b3.restdb.io/media/${imageId}?s=w;
+        cardImage.src=`https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
         cardImage.width = 125;
         //var src = document.getElementById("initialCard");
         //src.appendChild(img);
