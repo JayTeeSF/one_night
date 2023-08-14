@@ -239,8 +239,11 @@ function displayRole(roleKey) {
         console.log(`https://onenight-35b3.restdb.io/media/${imageId}?s=w`)
         var img = document.createElement("img");
         img.src = `https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
-        var src = document.getElementById("initialCard");
-        src.appendChild(img);
+        var cardImage = document.getElementById("cardImage");
+        cardImage.src=`https://onenight-35b3.restdb.io/media/${imageId}?s=w;
+        cardImage.width = 125;
+        //var src = document.getElementById("initialCard");
+        //src.appendChild(img);
         gInitialCardDisplayed = true;
       }
     }
