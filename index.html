@@ -27,9 +27,15 @@
         <br />
 
         <button id="startGame" onclick='(function(){ startGame(true); })();'>Create Game</button>
+        <img id="cardImage" src="https://media1.tenor.com/images/d6cd5151c04765d1992edfde14483068/tenor.gif?itemid=5662595">
+    </span>
+    
+    <span id="displayCard" style="display:none">
+        <img id="cardImage" src="https://media1.tenor.com/images/d6cd5151c04765d1992edfde14483068/tenor.gif?itemid=5662595">
+        <p id="cardName">Loading Card ...</p>
         <button id="newPlayerCheckButton" onclick='(function(){ addRolesToPlayers(); })();'>Check For New Players</button>
     </span>
-
+    
     <span id="joinGameScreen" style="display:none">
         Game ID: <input id="gameIdInput" type="number" min="1000" max="1000000">
         <br />
