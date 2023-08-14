@@ -11,6 +11,7 @@ function setupVars() {
   instructionsAndKickoffScreen = document.getElementById("instructionsAndKickoffScreen");
   createGameScreen = document.getElementById("createGameScreen");
   joinGameScreen = document.getElementById("joinGameScreen");
+  displayCardScreen = document.getElementById("displayCardScreen");
   gameIdDisplay = document.getElementById("gameIdDisplay");
   gameIdInput = document.getElementById("gameIdInput");
   numPlayersInput = document.getElementById("numPlayersInput");
@@ -396,6 +397,12 @@ function createGame() {
 
   remove(instructionsAndKickoffScreen);
   display(createGameScreen);
+}
+
+function showCards() {
+  setupVars();
+  remove(createGameScreen);
+  display(displayCardScreen);
 }
 
 // https://www.sitepoint.com/get-url-parameters-with-javascript/
