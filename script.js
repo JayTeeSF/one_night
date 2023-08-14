@@ -377,6 +377,7 @@ function addRolesToPlayers() {
 }
 
 function startGame(doCreate = false) {
+  showCards();
   name = nameInput.value;
   gameId = gameIdInput.value;
 
