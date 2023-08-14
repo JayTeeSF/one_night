@@ -241,7 +241,7 @@ function displayRole(roleKey) {
         //img.src = `https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
         var cardImage = document.getElementById("cardImage");
         cardImage.src=`https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
-        cardImage.width = 125;
+        cardImage.width = 187.5;
         //var src = document.getElementById("initialCard");
         //src.appendChild(img);
         gInitialCardDisplayed = true;
