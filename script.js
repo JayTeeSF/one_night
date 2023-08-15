@@ -389,12 +389,12 @@ function countPlayers() {
       "gameId": gameId
     }, 
     (res) => {
-      if (res.length == 0) {
+      if (JSON.parse(res) == 0) {
         console.log(`res IS EMPTY: ${res}`);
         changeNumPlayers(0);
       } else {
         console.log(`res IS FULL: ${res}`);
-        changeNumPlayers(res.length);
+        changeNumPlayers(JSON.parse(res).length);
       }
     }
   );
