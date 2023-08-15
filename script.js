@@ -230,11 +230,13 @@ function displayMyRole(roleKey) {
 function cardNameToFileName(cardName) {
   if (cardName.includes(" ")) {
     var cardWords = cardName.split(" ")
-    console.log(cardWords[0].toLowerCase() + cardWords[1]  + ".jpg");
-    return cardWords[0].toLowerCase() + cardWords[1]  + ".jpg";
+    var retVal = `/images/${cardWords[0].toLowerCase()}${cardWords[1]}.jpg`;
+    console.log(retVal);
+    return retVal;
   } else {
-    console.log(cardName.toLowerCase() + ".jpg"); 
-    return cardName.toLowerCase() + ".jpg";
+    var retVal = `/images/${cardName.toLowerCase()}.jpg`;
+    console.log(retVal);
+    return retVal;
   }
 }
 
