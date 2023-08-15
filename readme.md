@@ -21,7 +21,10 @@
 			- [ ] flags:
 				- [ ] viewed
 		- [ ] phase0: wait for everyone to verify they looked at their card... (perhaps a message in the table for everyone)
-		- [ ] phase1: wolves wake-up
+  - [ ] messageType(s): setup (true), turn (true), vote(return a playerId), talk (from anyone, no action required), gameOver (from host-computer: who won, not action required)
+  - [ ] gameId, senderId (0 means host-computer), receiverId (aka: playerId, 0 means "all"), instructionText (move cards, look at cards, etc), actionText (I'm done looking, I'm done moving, etc)
+  - [ ] any message of type-voting with a valid sender & receiverId indicates who the vote is "for" (and from).
+		- [ ] phase1: instructionText: wolves wake-up (turnType)
 			- [ ] store messages for both wolves (or the one wolf saying you're alone); or do nothing
 		- [ ] phase done check
 			- [ ] any messages from that phase?
