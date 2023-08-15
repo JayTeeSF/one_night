@@ -379,6 +379,7 @@ function getRoleDisplayer(roleObj) {
 
 function changeNumPlayers(numPlayers){
     document.getElementById("playersIn").innerHTML = `${numPlayers} Players`
+  console.log(numPlayers.length, typeof numPlayers)
 }
 
 function countPlayers() {
