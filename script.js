@@ -377,6 +377,29 @@ function getRoleDisplayer(roleObj) {
   };
 }
 
+function changeNumPlayers(numPlayers){
+    document.getElementById("playersIn").innerHTML = `${numPlayers} Players`
+}
+
+function countPlayers() {
+  select(
+    "players",
+    {
+      "gameId": gameId
+    }, 
+    (res) => {
+      if (res.length == 0) {
+        console.log(`res IS EMPTY: ${res}`);
+        changeNumPlayers(0);
+      } else {
+        console.log(`res IS FULL: ${res}`);
+        changeNumPlayers(res.length);
+      }
+    }
+  );
+  )
+}
+  
 function addRolesToPlayers() {
   select(
     "players",
