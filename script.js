@@ -397,7 +397,6 @@ function countPlayers() {
       }
     }
   );
-  )
 }
   
 function addRolesToPlayers() {
