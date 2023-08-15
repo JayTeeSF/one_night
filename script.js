@@ -227,6 +227,17 @@ function displayMyRole(roleKey) {
 }
 */
 
+function cardNameToFileName(cardName) {
+  if (cardName.includes(" ")) {
+    var cardWords = cardName.split(" ")
+    console.log(cardWords[0].toLowerCase() + cardWords[1]  + ".jpg");
+    return cardWords[0].toLowerCase() + cardWords[1]  + ".jpg";
+  } else {
+    console.log(cardName.toLowerCase() + ".jpg"); 
+    return cardName.toLowerCase() + ".jpg";
+  }
+}
+
 function displayRole(roleKey) {
   if (! gInitialCardDisplayed) {
     select("Roles", {"key": roleKey}, (res) => {
@@ -239,9 +250,6 @@ function displayRole(roleKey) {
         console.log(`https://onenight-35b3.restdb.io/media/${imageId}?s=w`)
         //var img = document.createElement("img");
         //img.src = `https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
-        var cardImage = document.getElementById("cardImage");
-        cardImage.src=`https://onenight-35b3.restdb.io/media/${imageId}?s=w`;
-        cardImage.width = 187.5;
         //var src = document.getElementById("initialCard");
         //src.appendChild(img);
         gInitialCardDisplayed = true;
@@ -353,9 +361,12 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
 
 function getRoleDisplayer(roleObj) {
   var role = roleObj["roleKey"]
-  console.log("about to add role");
+  console.log("about to add role and image");
   document.getElementById("cardName").innerHTML = JSON.stringify(role);
-  console.log("supposedly added role");
+  var cardImage = document.getElementById("cardImage");
+  cardImage.src=cardNameToFileName(JSON.stringify(role));
+  cardImage.width = 187.5;
+  console.log("supposedly added role and image");
   console.log(`preparing callback with displayRole using role: ${role}`);
   return (res) => {
     console.log(`running callback around displayRole with role: ${role}`)
