@@ -230,11 +230,12 @@ function displayMyRole(roleKey) {
 function cardNameToFileName(cardName) {
   if (cardName.includes(" ")) {
     var cardWords = cardName.split(" ")
-    var retVal = `/images/${cardWords[0].toLowerCase()}${cardWords[1]}.jpg`;
+    var retVal = `/one_night/assets/images/${cardWords[0].toLowerCase()}${cardWords[1]}.jpg`;
     console.log(retVal);
     return retVal;
   } else {
-    var retVal = `/images/${cardName.toLowerCase()}.jpg`;
+    var retVal = `/one_night/assets/images//${cardName.toLowerCase()}.jpg`;
+    
     console.log(retVal);
     return retVal;
   }
@@ -364,9 +365,9 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
 function getRoleDisplayer(roleObj) {
   var role = roleObj["roleKey"]
   console.log("about to add role and image");
-  document.getElementById("cardName").innerHTML = JSON.stringify(role);
+  document.getElementById("cardName").innerHTML = role;
   var cardImage = document.getElementById("cardImage");
-  cardImage.src=cardNameToFileName(JSON.stringify(role));
+  cardImage.src=cardNameToFileName(role);
   cardImage.width = 187.5;
   console.log("supposedly added role and image");
   console.log(`preparing callback with displayRole using role: ${role}`);
