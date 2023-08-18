@@ -28,11 +28,12 @@ function generateGame(startedAt = currentTimestamp()) {
   };
 }
 
-function generatePlayer(gameId) {
+function generatePlayer(gameId, isHost=false) {
   name = nameInput.value;
   return {
     "gameId": gameId,
     "name": name,
+    "isHost": isHost,
   };
 }
 
@@ -433,7 +434,7 @@ function startGame(doCreate = false) {
   } else {
     numPlayers = null;
     console.log(`JoinGame (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}...`);
-    insert("players", generatePlayer(gameId), savePlayerId); //logQueryResult); // should we alert the dealer ?!
+    insert("players", generatePlayer(gameId, true), savePlayerId); //logQueryResult); // should we alert the dealer ?!
   }
 }
 
