@@ -30,8 +30,8 @@ function generateGame(startedAt = currentTimestamp()) {
   };
 }
 
-function generatePlayer(gameId, isHost=false) {
-  name = nameInput.value;
+function generatePlayer(gameId, isHost=false, name=null) {
+  name ||= nameInput.value;
   return {
     "gameId": gameId,
     "name": name,
@@ -197,7 +197,7 @@ function setupRoles(res) {
     randomRoles: roleObjs
   }); // set it and forget it
 
-  insert("players", generatePlayer(gameId, true), savePlayerIdAndDealRole(name));
+  insert("players", generatePlayer(gameId, true, name), savePlayerIdAndDealRole(name));
 
   /*
     // EACH computer should know the "playerId"
@@ -546,7 +546,7 @@ function startGame(doCreate = false) {
   } else {
     numPlayers = null;
     console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}. Insert to players table dealRole...`);
-    insert("players", generatePlayer(gameId), savePlayerIdAndDealRole); //logQueryResult); // should we alert the dealer ?!
+    insert("players", generatePlayer(gameId, false, name), savePlayerIdAndDealRole(name)); //logQueryResult); // should we alert the dealer ?!
   }
 }
 
