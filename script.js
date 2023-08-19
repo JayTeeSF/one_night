@@ -12,6 +12,8 @@ function setupVars() {
   createGameScreen = document.getElementById("createGameScreen");
   joinGameScreen = document.getElementById("joinGameScreen");
   displayCardScreen = document.getElementById("displayCardScreen");
+  countdown = document.getElementById("countdown");
+  gameScreen = document.getElementById("gameScreen");
   gameIdDisplay = document.getElementById("gameIdDisplay");
   gameIdInput = document.getElementById("gameIdInput");
   numPlayersInput = document.getElementById("numPlayersInput");
@@ -363,6 +365,8 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
   }
 }
 
+
+
 function getRoleDisplayer(roleObj) {
   var role = roleObj["roleKey"]
   console.log("about to add role and image");
@@ -390,6 +394,45 @@ function seenCard() {
       {
         "seenCard": seenCard
       });
+  checkGameStart();
+}
+
+function timeout() {
+  const myTimeout = setTimeout(checkGameStart, 1000);
+}
+
+function countdown() {
+  remove(displayCardScreen);
+  display(countdown);
+  const myTimeout = setTimeout(checkGameStart, 1000);
+  countdown.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
+  myTimeout;
+  countdown.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
+  myTimeout;
+  remove(countdown);
+  display(gameScreen);
+}
+
+function checkGameStart() {
+  select(
+    "players",
+    {
+      "gameId": gameId,
+      "isHost": true
+    },
+    (res) => {
+      if (JSON.parse(res) == 0) {
+        console.log(`res IS EMPTY: ${res}`);
+        console.log("Database doesn't say we have seen card")
+      } else if (JSON.parse(res).length == numPlayers) {
+        countdown();
+      } else {
+        console.log(`res IS FULL: ${res}`);
+        console.log(`Only ${JSON.parse(res).length} players seen card`);
+        timeout();
+      }
+    }
+  );
 }
 
 function countPlayers() {
