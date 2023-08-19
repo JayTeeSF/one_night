@@ -415,13 +415,16 @@ function seenCard() {
     if(gameRecordId == -1) {
     gameRecordId = null;
   }
-  update("players",
-      playerRecordId,
-      gameId,
-      {
-        "seenCard": true
-      }
-  );
+  setTimeout(function () {
+        update("players",
+        playerRecordId,
+        gameId,
+        {
+          "seenCard": true
+        }
+        );
+    }, 5000);
+  
   checkGameStart();
 }
 
