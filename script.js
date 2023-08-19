@@ -224,7 +224,12 @@ function savePlayerId(res, cb) {
   var player = JSON.parse(res);
   gPlayerId = player._id
   console.log(` --> [saving Player Id]: player: ${res}...`);
-  if(cb) cb();
+  if(cb) { 
+    console.log("savePlayerId called w/ cb...");
+    cb();
+  } else {
+        console.log("savePlayerId called w/o a cb... JJ should handle this special case..");
+  }
 }
 
 /*
