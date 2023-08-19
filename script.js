@@ -240,7 +240,7 @@ function savePlayerId(res, cb) {
     console.log("savePlayerId called w/ cb...");
     cb();
   } else {
-        console.log("savePlayerId called w/o a cb... JJ should handle this special case..");
+    console.log(">>>> savePlayerId: missing callback ...this should NOT still happen <<<<");
   }
 }
 
@@ -545,8 +545,8 @@ function startGame(doCreate = false) {
     insert("games", generateGame(), handleGameInsert);
   } else {
     numPlayers = null;
-    console.log(`JoinGame (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}...`);
-    insert("players", generatePlayer(gameId), savePlayerId); //logQueryResult); // should we alert the dealer ?!
+    console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}. Insert to players table dealRole...`);
+    insert("players", generatePlayer(gameId), savePlayerIdAndDealRole); //logQueryResult); // should we alert the dealer ?!
   }
 }
 
