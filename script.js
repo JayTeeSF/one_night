@@ -423,7 +423,8 @@ function checkGameStart() {
     (res) => {
       if (JSON.parse(res) == 0) {
         console.log(`res IS EMPTY: ${res}`);
-        console.log("Database doesn't say we have seen card")
+        console.log("Database doesn't say we have seen card");
+        countdown();
       } else if (JSON.parse(res).length == numPlayers) {
         countdown();
       } else {
