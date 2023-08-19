@@ -383,6 +383,14 @@ function changeNumPlayers(numPlayers){
   console.log(numPlayers.length, typeof numPlayers)
 }
 
+function seenCard() {
+  update("players",
+      playerRecord["_id"],
+      {
+        seenCard: true
+      });
+}
+
 function countPlayers() {
   select(
     "players",
@@ -434,7 +442,7 @@ function startGame(doCreate = false) {
   } else {
     numPlayers = null;
     console.log(`JoinGame (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}...`);
-    insert("players", generatePlayer(gameId, true), savePlayerId); //logQueryResult); // should we alert the dealer ?!
+    insert("players", generatePlayer(gameId), savePlayerId); //logQueryResult); // should we alert the dealer ?!
   }
 }
 
@@ -465,6 +473,8 @@ function joinGame(gameId) {
   remove(instructionsAndKickoffScreen);
   display(joinGameScreen);
 }
+
+
 
 function show(el) {
   el.style.visibility = 'visible';
