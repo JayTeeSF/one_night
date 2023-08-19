@@ -1,4 +1,4 @@
-var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay, playerRecordId;
+var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay, playerRecordId, nameInput;
 var gameId, numPlayers, name, db, roleObjs, gPlayerId;
 var gInitialCardDisplayed = false;
 const assignedRoleObjs = [];
@@ -60,13 +60,13 @@ function select(tableName, filter, callback, badcallback) {
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
   console.log(`Looking '${tableName}' Record where: ${stringifiedFilter}...`);
-  send(xhttp, null, 60000);
+  send(xhttp, null, 10000);
 }
 
 function send(xhttp, argsAry=null, delay=0) {
   setTimeout(function () {
     if (argsAry) {
-      xhttp.send(..argsAry);
+      xhttp.send(...argsAry);
     } else {
       xhttp.send()
     }
@@ -100,7 +100,7 @@ function insert(tableName, data, callback, badcallback) {
   var stringifiedData = JSON.stringify(data);
   console.log(`Generating New '${tableName}' Record: ${stringifiedData}...`);
   // xhttp.send(stringifiedData);
-  send(xhttp, [stringifiedData], 60000);
+  send(xhttp, [stringifiedData], 10000);
 }
 
 /*
@@ -132,7 +132,7 @@ function update(tableName, rowId, data, callback, badcallback) {
   var stringifiedData = JSON.stringify(data);
   console.log(`Updating '${tableName}' Record(${rowId}) with ${stringifiedData}...`);
   // xhttp.send(stringifiedData);
-  send(xhttp, [stringifiedData], 60000);
+  send(xhttp, [stringifiedData], 10000);
 }
 
 function handleGameInsert(res) {
