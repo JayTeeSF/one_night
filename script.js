@@ -394,6 +394,7 @@ function seenCard() {
   console.log(`gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId}`);
   update("players",
       playerRecordId,
+      gameId,
       {
         "seenCard": seenCard
       });
