@@ -384,10 +384,11 @@ function changeNumPlayers(numPlayers){
 }
 
 function seenCard() {
+  const seenCard = true;
   update("players",
       gPlayerId,
       {
-        "seenCard": true
+        "seenCard": seenCard
       });
 }
 
