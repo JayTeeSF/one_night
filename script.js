@@ -387,7 +387,7 @@ function seenCard() {
   update("players",
       gPlayerId,
       {
-        seenCard: true
+        "seenCard": true
       });
 }
 
