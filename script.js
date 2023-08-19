@@ -337,20 +337,20 @@ function appendRoleToFirstPlayer(res) {
 
 function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
   var playerRecord = playerRecords[idx];
-  console.log(`playerRecords[${idx}]: ${playerRecord}`);
+  console.log(`appendRoleToPlayer: playerRecords[${idx}]: ${playerRecord}`);
   var playerName = playerRecord["name"];
   var cb;
 
   if (roleAssignedTo(playerName)) {
-    console.error(`Player '${playerName}' already has an assigned role.`);
+    console.error(`appendRoleToPlayer: Player '${playerName}' already has an assigned role.`);
   } else {
-    console.log(`unassignedRoles: ${JSON.stringify(roleObjs)}, assignedRoles: ${JSON.stringify(assignedRoleObjs)}`);
+    console.log(`appendRoleToPlayer: unassignedRoles: ${JSON.stringify(roleObjs)}, assignedRoles: ${JSON.stringify(assignedRoleObjs)}`);
     var roleObj = roleObjs.shift();
     assignedRoleObjs.push({
       [playerName]: roleObj
     });
     var defaultCallback = getRoleDisplayer(roleObj);
-    console.log(`Got player row (${JSON.stringify(playerRecord)}), now assigning random role: ${JSON.stringify(roleObj)}...`);
+    console.log(`appendRoleToPlayer: Got player row (${JSON.stringify(playerRecord)}), now assigning random role: ${JSON.stringify(roleObj)}...`);
     // a single-line-if goes ahead of the command, in Javascript: if(true) console.log("got true");
     if (cbBuilder) { cb = cbBuilder(playerRecords, ct, idx); };
     var callbackChain = (res) => {
@@ -358,6 +358,7 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
       if(cb) { cb(res); };
     };
 
+    console.log(`****appendRoleToPlayer's about to update the player table w/ pR[id]: ${playerRecord["_id"]} ****`);
     update("players",
       playerRecord["_id"],
       {
@@ -367,13 +368,12 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
       },
       callbackChain,
       (res) => {
+        console.log("**** In Callback for appendRoleToPlayer's call to update the player table... ****");
         removeRoleAssignmentFor(playerName)
       }
     );
   }
 }
-
-
 
 function getRoleDisplayer(roleObj) {
   var role = roleObj["roleKey"]
@@ -391,19 +391,19 @@ function getRoleDisplayer(roleObj) {
 }
 
 function changeNumPlayers(numPlayers){
-    document.getElementById("playersIn").innerHTML = `${numPlayers} Players`
-  console.log(numPlayers.length, typeof numPlayers)
+  document.getElementById("playersIn").innerHTML = `${numPlayers} Players`
+  console.log(numPlayers, typeof numPlayers)
 }
 
 function seenCard() {
-  const seenCard = true;
-  console.log(`gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId}`);
+ console.log(`****seenCard: about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${playerRecord["_id"]}, gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId} ****`);
   update("players",
       playerRecordId,
       gameId,
       {
-        "seenCard": seenCard
-      });
+        "seenCard": true
+      }
+  );
   checkGameStart();
 }
 
