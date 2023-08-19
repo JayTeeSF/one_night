@@ -423,7 +423,7 @@ function seenCard() {
           "seenCard": true
         }
         );
-    }, 5000);
+    }, 60000);
   
   checkGameStart();
 }
