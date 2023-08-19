@@ -402,7 +402,8 @@ function timeout() {
 }
 
 function countdownTimeout() {
-  const myTimeout = setTimeout(countdown, 1000);
+  const newTime = setTimeout(countdown, 1000);
+  console.log("Timeout")
 }
 
 function countdown() {
