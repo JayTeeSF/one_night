@@ -385,7 +385,7 @@ function changeNumPlayers(numPlayers){
 
 function seenCard() {
   update("players",
-      playerRecord["_id"],
+      gPlayerId,
       {
         seenCard: true
       });
