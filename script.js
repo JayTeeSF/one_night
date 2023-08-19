@@ -389,12 +389,12 @@ function changeNumPlayers(numPlayers){
 
 function seenCard() {
   const seenCard = true;
-  update("players",
+  /*update("players",
       gameId,
       gPlayerId,
       {
         "seenCard": seenCard
-      });
+      });*/
   checkGameStart();
 }
 
