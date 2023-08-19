@@ -60,7 +60,17 @@ function select(tableName, filter, callback, badcallback) {
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
   console.log(`Looking '${tableName}' Record where: ${stringifiedFilter}...`);
-  xhttp.send();
+  send(xhttp, null, 60000);
+}
+
+function send(xhttp, argsAry=null, delay=0) {
+  setTimeout(function () {
+    if (argsAry) {
+      xhttp.send(..argsAry);
+    } else {
+      xhttp.send()
+    }
+  }, delay);
 }
 
 /*
@@ -89,7 +99,8 @@ function insert(tableName, data, callback, badcallback) {
   xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
   var stringifiedData = JSON.stringify(data);
   console.log(`Generating New '${tableName}' Record: ${stringifiedData}...`);
-  xhttp.send(stringifiedData);
+  // xhttp.send(stringifiedData);
+  send(xhttp, [stringifiedData], 60000);
 }
 
 /*
@@ -120,7 +131,8 @@ function update(tableName, rowId, data, callback, badcallback) {
   xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
   var stringifiedData = JSON.stringify(data);
   console.log(`Updating '${tableName}' Record(${rowId}) with ${stringifiedData}...`);
-  xhttp.send(stringifiedData);
+  // xhttp.send(stringifiedData);
+  send(xhttp, [stringifiedData], 60000);
 }
 
 function handleGameInsert(res) {
@@ -355,7 +367,10 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
     if (cbBuilder) { cb = cbBuilder(playerRecords, ct, idx); };
     var callbackChain = (res) => {
       defaultCallback(res);
-      if(cb) { cb(res); };
+      if(cb) { 
+        console.log(`appendRoleToPlayer: after defaultCallback (getRoleDisplayer), calling cb(${JSON.stringify(res)})`)
+        cb(res); 
+      };
     };
 
     console.log(`****appendRoleToPlayer's about to update the player table w/ pR[id]: ${playerRecord["_id"]} ****`);
@@ -405,7 +420,7 @@ function seenCard() {
   if (typeof gameRecordId == 'undefined') {
   gameRecordId = -1;
   }
- console.log(`****seenCard: about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${playerRecord["_id"]}, gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId} ****`);
+ console.log(`****seenCard(): about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${playerRecord["_id"]}, gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId} ****`);
   if(playerRecord == -1) {
     playerRecord = null;
   }
@@ -415,15 +430,17 @@ function seenCard() {
     if(gameRecordId == -1) {
     gameRecordId = null;
   }
-  setTimeout(function () {
-        update("players",
+ 
+  update("players",
         playerRecordId,
-        gameId,
         {
           "seenCard": true
+        }, (res) => {
+          console.log(`seenCard(): callback w/ ${JSON.stringify(res)}`)
+        }, (res) => {
+          console.log(`seenCard(): badcallback w/ ${JSON.stringify(res)}`)
         }
-        );
-    }, 60000);
+  );
   
   checkGameStart();
 }
