@@ -396,9 +396,15 @@ function changeNumPlayers(numPlayers){
 }
 
 function seenCard() {
-  playerRecord ||= -1;
-  gPlayerId ||= -1;
-  gameRecordId ||= -1;
+  if (typeof playerRecord == 'undefined') {
+    var playerRecord = -1;
+  }
+  if (typeof gPlayerId == 'undefined') {
+  var gPlayerId = -1;
+  }
+  if (typeof gameRecordId == 'undefined') {
+  gameRecordId = -1;
+  }
  console.log(`****seenCard: about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${playerRecord["_id"]}, gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId} ****`);
   if(playerRecord == -1) {
     playerRecord = null;
