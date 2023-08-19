@@ -127,6 +127,7 @@ function handleGameInsert(res) {
   var gameRecord = JSON.parse(res);
   gameRecordId = gameRecord["_id"];
   gameId = gameRecord.id;
+  console.log(`GRID${gameRecordId}::::GID:${gameId}`);
   var linkOfGameId = gameId.toString().link(`${window.location}?gameId=${gameId}`)
   gameIdDisplay.innerHTML = linkOfGameId;
 
@@ -389,12 +390,12 @@ function changeNumPlayers(numPlayers){
 
 function seenCard() {
   const seenCard = true;
-  /*update("players",
+  update("players",
       gameId,
       gPlayerId,
       {
         "seenCard": seenCard
-      });*/
+      });
   checkGameStart();
 }
 
