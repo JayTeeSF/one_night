@@ -184,7 +184,7 @@ function setupRoles(res) {
     randomRoles: roleObjs
   }); // set it and forget it
 
-  insert("players", generatePlayer(gameId), savePlayerIdAndDealRole(name));
+  insert("players", generatePlayer(gameId, true), savePlayerIdAndDealRole(name));
 
   /*
     // EACH computer should know the "playerId"
@@ -498,7 +498,7 @@ function startGame(doCreate = false) {
   } else {
     numPlayers = null;
     console.log(`JoinGame (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}...`);
-    insert("players", generatePlayer(gameId, true), savePlayerId); //logQueryResult); // should we alert the dealer ?!
+    insert("players", generatePlayer(gameId), savePlayerId); //logQueryResult); // should we alert the dealer ?!
   }
 }
 
