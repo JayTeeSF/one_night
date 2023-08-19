@@ -414,6 +414,8 @@ function countdown() {
 }
 
 function checkGameStart() {
+  countdown();
+  /*
   select(
     "players",
     {
@@ -434,6 +436,7 @@ function checkGameStart() {
       }
     }
   );
+  */
 }
 
 function countPlayers() {
