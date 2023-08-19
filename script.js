@@ -397,25 +397,23 @@ function seenCard() {
   checkGameStart();
 }
 
-function timeout() {
-  const myTimeout = setTimeout(checkGameStart, 1000);
+function timeout(func) {
+  const myTimeout = setTimeout(func, 1000);
 }
 
 function countdown() {
   remove(displayCardScreen);
   display(countdownPage);
-  timeout();
+  timeout(countdown);
   countdownDisplay.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
-  timeout();
+  timeout(countdown);
   countdownDisplay.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
-  timeout();
+  timeout(countdown);
   remove(countdownPage);
   display(gameScreen);
 }
 
 function checkGameStart() {
-  countdown();
-  /*
   select(
     "players",
     {
@@ -432,11 +430,10 @@ function checkGameStart() {
       } else {
         console.log(`res IS FULL: ${res}`);
         console.log(`Only ${JSON.parse(res).length} players seen card`);
-        timeout();
+        timeout(checkGameStart);
       }
     }
   );
-  */
 }
 
 function countPlayers() {
