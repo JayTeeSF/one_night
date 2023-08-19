@@ -404,11 +404,11 @@ function timeout() {
 function countdown() {
   remove(displayCardScreen);
   display(countdown);
-  const myTimeout = setTimeout(checkGameStart, 1000);
+  timeout();
   countdown.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
-  myTimeout;
+  timeout();
   countdown.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
-  myTimeout;
+  timeout();
   remove(countdown);
   display(gameScreen);
 }
