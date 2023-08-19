@@ -209,6 +209,7 @@ function setupRoles(res) {
 
 function savePlayerIdAndDealRole(playerName=name) {
   var cb = (res) => { dealRoleTo(playerName); };
+  console.log(`dealRoleTo bruv: ${playerName}`)
 
   return (res) => {
     savePlayerId(res, cb);
