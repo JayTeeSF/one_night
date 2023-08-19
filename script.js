@@ -220,7 +220,7 @@ function setupRoles(res) {
 }
 
 function savePlayerIdAndDealRole(playerName=name) {
-  var cb = (res) => { dealRoleTo(playerName); };
+  var cb = (thePlayer) => { dealRoleTo(playerName, thePlayer); };
   console.log(`dealRoleTo bruv: ${playerName}`)
 
   return (res) => {
@@ -237,8 +237,8 @@ function savePlayerId(res, cb) {
   gPlayerId = player._id
   console.log(` --> [saving Player Id]: player: ${res}...`);
   if(cb) { 
-    console.log("savePlayerId called w/ cb...");
-    cb();
+    console.log(`savePlayerId called w/ cb(<record for ${player['name']}>)...`);
+    cb(player);
   } else {
     console.log(">>>> savePlayerId: missing callback ...this should NOT still happen <<<<");
   }
@@ -298,7 +298,8 @@ function displayRole(roleKey) {
    ...generatePlayer(gameId)
  }, savePlayerId); //logQueryResult);
  */
-function dealRoleTo(somePlayerName) {
+function dealRoleTo(somePlayerName, selectedPlayerRecord) {
+  if (typeof selectedPlayerRecord == "undefined") {
   console.log(`randomly assign a role to player named: ${somePlayerName}, after selecing from the 'players' table where the rolKey is unassigned...`);
   select("players", {
     "gameId": gameId,
@@ -306,6 +307,11 @@ function dealRoleTo(somePlayerName) {
     "roleKey": {"$exists": false}
   }, appendRoleToFirstPlayer
   );
+  } else {
+  console.log(`randomly assign a role to player named: ${somePlayerName}, using the ALREADY selected object`);
+    // appendRoleToFirstPlayer(selectedPlayerObject);
+    appendRoleToPlayer([selectedPlayerRecord], 1, 0);
+  }
 }
 
 function playerHasARole(roleObjAssignment, playerName) {
