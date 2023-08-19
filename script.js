@@ -401,21 +401,27 @@ function timeout() {
   const myTimeout = setTimeout(checkGameStart, 1000);
 }
 
-function countdownTimeout() {
-  const newTime = setTimeout(countdown, 1000);
-  console.log("Timeout")
+function countdownTimeout(num) {
+  num++;
+  const newTime = setTimeout(countdown, 1000, num);
+  console.log(`Timeout ${num}`);
 }
 
-function countdown() {
-  remove(displayCardScreen);
-  display(countdownPage);
-  countdownTimeout();
-  countdownDisplay.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
-  countdownTimeout();
-  countdownDisplay.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
-  countdownTimeout();
-  remove(countdownPage);
-  display(gameScreen);
+function countdown(num) {
+  if (num == 0) {
+    remove(displayCardScreen);
+    display(countdownPage);
+    countdownTimeout(num);
+  } else if (num == 1) {
+    countdownDisplay.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
+    countdownTimeout();
+  } else if (num == 2) {
+    countdownDisplay.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
+    countdownTimeout();
+  } else {
+    remove(countdownPage);
+    display(gameScreen);
+  }
 }
 
 function checkGameStart() {
@@ -429,9 +435,9 @@ function checkGameStart() {
       if (JSON.parse(res) == 0) {
         console.log(`res IS EMPTY: ${res}`);
         console.log("Database doesn't say we have seen card");
-        countdown();
+        countdown(0);
       } else if (JSON.parse(res).length == numPlayers) {
-        countdown();
+        countdown(0);
       } else {
         console.log(`res IS FULL: ${res}`);
         console.log(`Only ${JSON.parse(res).length} players seen card`);
