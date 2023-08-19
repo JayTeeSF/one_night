@@ -429,7 +429,7 @@ function checkGameStart() {
     "players",
     {
       "gameId": gameId,
-      "isHost": true
+      "seenCard": true
     },
     (res) => {
       if (JSON.parse(res) == 0) {
@@ -498,7 +498,7 @@ function startGame(doCreate = false) {
   } else {
     numPlayers = null;
     console.log(`JoinGame (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}...`);
-    insert("players", generatePlayer(gameId), savePlayerId); //logQueryResult); // should we alert the dealer ?!
+    insert("players", generatePlayer(gameId, true), savePlayerId); //logQueryResult); // should we alert the dealer ?!
   }
 }
 
