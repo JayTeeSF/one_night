@@ -1,5 +1,5 @@
 var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay, playerRecordId, nameInput;
-var gameId, numPlayers, name, db, roleObjs, gPlayerId;
+var gameId, numPlayers, name, db, roleObjs, gPlayerId, isHost;
 var gInitialCardDisplayed = false;
 const assignedRoleObjs = [];
 const dbApiCorsKey = "5f0536bca529a1752c476e9a";
@@ -30,7 +30,7 @@ function generateGame(startedAt = currentTimestamp()) {
   };
 }
 
-function generatePlayer(gameId, isHost=false, name=null) {
+function generatePlayer(gameId, name=null) {
   name ||= nameInput.value;
   return {
     "gameId": gameId,
@@ -59,11 +59,11 @@ function select(tableName, filter, callback, badcallback) {
   xhttp.open("GET", `${baseTableUrl}/${tableName}?q=${stringifiedFilter}`, true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("x-apikey", dbApiCorsKey);
-  console.log(`Looking '${tableName}' Record where: ${stringifiedFilter}...`);
-  send(xhttp, null, 10000);
+  console.log(`Selecting '${tableName}' Record where: ${stringifiedFilter}...`);
+  send(xhttp, null);
 }
 
-function send(xhttp, argsAry=null, delay=0) {
+function send(xhttp, argsAry=null, delay=300) {
   setTimeout(function () {
     if (argsAry) {
       xhttp.send(...argsAry);
@@ -100,7 +100,7 @@ function insert(tableName, data, callback, badcallback) {
   var stringifiedData = JSON.stringify(data);
   console.log(`Generating New '${tableName}' Record: ${stringifiedData}...`);
   // xhttp.send(stringifiedData);
-  send(xhttp, [stringifiedData], 10000);
+  send(xhttp, [stringifiedData]);
 }
 
 /*
@@ -132,14 +132,14 @@ function update(tableName, rowId, data, callback, badcallback) {
   var stringifiedData = JSON.stringify(data);
   console.log(`Updating '${tableName}' Record(${rowId}) with ${stringifiedData}...`);
   // xhttp.send(stringifiedData);
-  send(xhttp, [stringifiedData], 10000);
+  send(xhttp, [stringifiedData]);
 }
 
 function handleGameInsert(res) {
   var gameRecord = JSON.parse(res);
   gameRecordId = gameRecord["_id"];
   gameId = gameRecord.id;
-  console.log(`GRID${gameRecordId}::::GID:${gameId}`);
+  console.log(`handleGameInsert(<gameReecordJSON>): GRID${gameRecordId}::::GID:${gameId}`);
   var linkOfGameId = gameId.toString().link(`${window.location}?gameId=${gameId}`)
   gameIdDisplay.innerHTML = linkOfGameId;
 
@@ -197,7 +197,7 @@ function setupRoles(res) {
     randomRoles: roleObjs
   }); // set it and forget it
 
-  insert("players", generatePlayer(gameId, true, name), savePlayerIdAndDealRole(name));
+  insert("players", generatePlayer(gameId, name), savePlayerIdAndDealRole(name));
 
   /*
     // EACH computer should know the "playerId"
@@ -299,12 +299,13 @@ function displayRole(roleKey) {
  }, savePlayerId); //logQueryResult);
  */
 function dealRoleTo(somePlayerName) {
-  console.log(`randomly assign a role to player named: ${somePlayerName}...`);
+  console.log(`randomly assign a role to player named: ${somePlayerName}, after selecing from the 'players' table where the rolKey is unassigned...`);
   select("players", {
     "gameId": gameId,
     "name": somePlayerName,
     "roleKey": {"$exists": false}
-  }, appendRoleToFirstPlayer);
+  }, appendRoleToFirstPlayer
+  );
 }
 
 function playerHasARole(roleObjAssignment, playerName) {
@@ -341,6 +342,7 @@ function appendRoleToPlayers(res, cbBuilder=null) {
 }
 
 function appendRoleToFirstPlayer(res) {
+  console.log(`appendRoleToFirstPlayer(${res})...`);
   var playerRecords = JSON.parse(res);
   var playerRecord = playerRecords[0];
   playerRecordId = playerRecord['_id'];
@@ -535,24 +537,27 @@ function addRolesToPlayers() {
 
 function startGame(doCreate = false) {
   showCards();
-  console.log("called show cards");
+  console.log(`startGame(${doCreate ? 'create' : 'join'}): called show cards`);
   name = nameInput.value;
   gameId = gameIdInput.value;
 
   if (doCreate) {
+    isHost = true;
     numPlayers = numPlayersInput.value;
-    console.log(`Start a new ${numPlayers} player game as name: ${name} -- No-gameId: ${gameId} (yet)...`);
+    console.log(`startGame(true): with ${numPlayers} players, as name: ${name} -- No-gameId: >>${gameId}<< (yet)...`);
     insert("games", generateGame(), handleGameInsert);
   } else {
+    isHost = false;
     numPlayers = null;
-    console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: ${numPlayers}. Insert to players table dealRole...`);
-    insert("players", generatePlayer(gameId, false, name), savePlayerIdAndDealRole(name)); //logQueryResult); // should we alert the dealer ?!
+    console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: >>${numPlayers}<< (yet)...`);
+    insert("players", generatePlayer(gameId, name), savePlayerIdAndDealRole(name));
+
   }
 }
 
 function createGame() {
   setupVars();
-  nameInput = document.getElementById("createNameInput");
+  nameInput ||= document.getElementById("createNameInput");
 
   remove(instructionsAndKickoffScreen);
   display(createGameScreen);
@@ -576,17 +581,16 @@ function showCards() {
 
 // https://www.sitepoint.com/get-url-parameters-with-javascript/
 function joinGame(gameId) {
+  console.log(`----------> UNEXPECTED CALL (needs to be removed): joinGame(${gameId}) ...calling setupVars()... <---------`);
   setupVars();
   if (typeof (gameId) != 'undefined' && gameId != null) {
     gameIdInput.value = gameId;
   }
-  nameInput = document.getElementById("joinNameInput");
+  nameInput ||= document.getElementById("joinNameInput");
 
   remove(instructionsAndKickoffScreen);
   display(joinGameScreen);
 }
-
-
 
 function show(el) {
   el.style.visibility = 'visible';
