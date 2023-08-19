@@ -414,10 +414,10 @@ function countdown(num) {
     countdownTimeout(num);
   } else if (num == 1) {
     countdownDisplay.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
-    countdownTimeout();
+    countdownTimeout(num);
   } else if (num == 2) {
     countdownDisplay.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
-    countdownTimeout();
+    countdownTimeout(num);
   } else {
     remove(countdownPage);
     display(gameScreen);
