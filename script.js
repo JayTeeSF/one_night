@@ -12,7 +12,7 @@ function setupVars() {
   createGameScreen = document.getElementById("createGameScreen");
   joinGameScreen = document.getElementById("joinGameScreen");
   displayCardScreen = document.getElementById("displayCardScreen");
-  countdown = document.getElementById("countdown");
+  countdownDisplay = document.getElementById("countdown");
   gameScreen = document.getElementById("gameScreen");
   gameIdDisplay = document.getElementById("gameIdDisplay");
   gameIdInput = document.getElementById("gameIdInput");
@@ -403,13 +403,13 @@ function timeout() {
 
 function countdown() {
   remove(displayCardScreen);
-  display(countdown);
+  display(countdownPage);
   timeout();
-  countdown.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
+  countdownDisplay.src="https://static.wikia.nocookie.net/unoffical-number-lore/images/c/c0/2design.png/revision/latest?cb=20221227172228";
   timeout();
-  countdown.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
+  countdownDisplay.src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQKD8DPG5uQWsufJsaob4TEiq3UPi-SqJKPw&usqp=CAU";
   timeout();
-  remove(countdown);
+  remove(countdownPage);
   display(gameScreen);
 }
 
