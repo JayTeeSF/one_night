@@ -514,8 +514,16 @@ function createGame() {
 function showCards() {
   console.log("inside show cards")
   setupVars();
-  remove(createGameScreen);
-  remove(joinGameScreen);
+  try {
+    remove(createGameScreen);
+  } catch(e) {
+    console.log(e)
+  }
+  try {
+    remove(joinGameScreen);
+  } catch(e) {
+    console.log(e)
+  }
   display(displayCardScreen);
 }
 
