@@ -396,6 +396,9 @@ function changeNumPlayers(numPlayers){
 }
 
 function seenCard() {
+  playerRecord ||= null;
+  gPlayerId ||= null;
+  gameRecordId ||= null;
  console.log(`****seenCard: about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${playerRecord["_id"]}, gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId} ****`);
   update("players",
       playerRecordId,
