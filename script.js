@@ -1,4 +1,4 @@
-var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay;
+var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay, playerRecordId;
 var gameId, numPlayers, name, db, roleObjs, gPlayerId;
 var gInitialCardDisplayed = false;
 const assignedRoleObjs = [];
@@ -325,6 +325,7 @@ function appendRoleToPlayers(res, cbBuilder=null) {
 function appendRoleToFirstPlayer(res) {
   var playerRecords = JSON.parse(res);
   var playerRecord = playerRecords[0];
+  playerRecordId = playerRecord['_id'];
   appendRoleToPlayer([playerRecord], 1, 0);
 }
 
@@ -392,8 +393,7 @@ function seenCard() {
   const seenCard = true;
   console.log(`gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId}`);
   update("players",
-      gPlayerId,
-      gameRecordId,
+      playerRecordId,
       {
         "seenCard": seenCard
       });
