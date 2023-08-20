@@ -192,7 +192,7 @@ function _reCacheRandomRoles(res, cb) {
 function _fetchRandomRoles(cb) {
   console.log(`_fetchRandomRoles(cb): selecting the current game using gameRecordId (even though we don't have it yet): ${gameRecordId} and gameId: ${gameId}?!...`);
   select("games", {
-     "id": gameId
+     "id": Number(gameId)
   }, (res) => {
     console.log(`_feetchRandomRoles select of the game is being passed to _reCacheRandomRoles(res, cb)...`);
     _reCacheRandomRoles(res, cb)
