@@ -249,7 +249,7 @@ function savePlayerIdAndDealRole(playerName=name) {
   console.log(`dealRoleTo bruv: ${playerName}`)
 
   return (res) => {
-    console.log(`callback that's about to trigger savePlayerId(res, cb(aka dealRoleTo(playerName...))...`)
+    console.log(`callback that's about to trigger savePlayerId(${res}, cb(aka dealRoleTo(playerName...))...`)
     savePlayerId(res, cb);
   }
 }
@@ -597,7 +597,7 @@ function startGame(doCreate = false) {
     console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: >>${numPlayers}<< (yet)...`);
     insert("players",
            generatePlayer(gameId, name),
-           _fetchRandomRoles(savePlayerIdAndDealRole(name))
+           () => { _fetchRandomRoles(savePlayerIdAndDealRole(name)) }
     );
 
   }
