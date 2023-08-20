@@ -177,10 +177,11 @@ function _reCacheRandomRoles(res, cb) {
   console.log(`_reCacheRandomRoles: gameRecord: ${gameRecord}`)
   gameRecordId = gameRecord["_id"];
   roleObjs = gameRecord["randomRoles"];
-  var role = roleObjs.shift();
-  assignedRoleObjs.push({
-    [name]: role
-  });
+  // Avoid picking a role now ...do this work later when saving the player to reduce possibility of race-condition...
+  // var role = roleObjs.shift();
+  // assignedRoleObjs.push({
+  //   [name]: role
+  // });
   // fill rest of assignedRoleObjs by doing a select of the players table, where gameId = gameId and name & roleKey are not null
   if (cb) {
     console.log(`_reCacheRandomRoles(): (which extracted gameRecordId: ${gameRecordId}) is calling callback (to setup nonHost player) after assigning global roleObjs and assignedRolesObjs vars`);
@@ -428,7 +429,7 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
       },
       callbackChain,
       (res) => {
-        console.log("**** In Callback for appendRoleToPlayer's call to update the player table... ****");
+        console.log(`**** (JT: IS THIS THE FAIL CALLBACK? (if so, re-call 'appendRoleToPlayer(${JSON.stringify(playerRecords)}, ${ct}, ${idx}, <cbBuilder>)' after removeRoleAssignmentFor(playerName) In Callback for appendRoleToPlayer's call to update the player table... ****`);
         removeRoleAssignmentFor(playerName)
       }
     );
