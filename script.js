@@ -433,7 +433,6 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
         removeRoleAssignmentFor(playerName)
       }
     );
-  }
 }
 
 function getRoleDisplayer(roleObj) {
