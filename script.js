@@ -262,7 +262,7 @@ function savePlayerId(res, cb) {
   console.log(`savePlayerId(res, cb)...`);
   
   var player = JSON.parse(res);
-  gPlayerId = Number(player._id);
+  gPlayerId ||= Number(player._id);
   console.log(` --> [saving Player Id]: player: ${res}...`);
   if(cb) { 
     console.log(`savePlayerId called w/ cb(<record for ${player['name']}>)...`);
@@ -595,17 +595,15 @@ function startGame(doCreate = false) {
     isHost = false;
     numPlayers = null;
     console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: >>${numPlayers}<< (yet)...`);
-    let generatedPlayerObject = generatePlayer(gameId, name);
     insert("players",
-           generatedPlayerObject,
-           (ignoreeRes1) => { 
-             console.log(`don't trigger _fetchRandomRoles immediately, wrap it in an anonymous fn, so we can call it with pre-defined values`);
+           generatePlayer(gameId, name),
+           (playerRes) => { 
+             console.log(`Don't trigger _fetchRandomRoles immediately, wrap it in an anonymous fn, so we can call it with pre-defined values`);
              _fetchRandomRoles(
                (ignoredRes2) => {
                  let savePlayerIdCallback = savePlayerIdAndDealRole(name);
-                 let gPORes = JSON.stringify(generatedPlayerObject);
-                 console.log(`even though savePlayerIdAndDealRole(name) immediately returns, it supplies a callback ..that needs to be called w/ the generatedPlayerObject: ${gPORes}`);
-                   savePlayerIdCallback(gPORes);
+                 console.log(`Even though savePlayerIdAndDealRole(name) immediately returns, it supplies a callback ..that needs to be called w/ the generatedPlayer res: ${playerRes}`);
+                 savePlayerIdCallback(playerRes);
                }
              )
            }
