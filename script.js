@@ -350,8 +350,8 @@ function appendRoleToPlayerCountIdx(res) {
   var currentPlayerObjs = JSON.parse(res);
   var currentOrderedPlayerObjs = currentPlayerObjs.sort((a, b) => parseInt(a["id"]) - parseInt(b["id"])); // a - b ascending!
   console.log(`appendRoleToPlayerCountIdx#currentOrderedPlayerObjs: ${JSON.stringify(currentOrderedPlayerObjs)}`)
-  gPlayerCountIdx =  currentOrderedPlayerObjs.map(e => e["id"]).indexOf(gPlayerId);
-  console.log(`appendRoleToPlayerCountIdx#gPlayerCountIdx: ${gPlayerCountIdx}`)
+  gPlayerCountIdx =  currentOrderedPlayerObjs.map(e => Number(e["id"])).indexOf(gPlayerId);
+  console.log(`appendRoleToPlayerCountIdx#gPlayerCountIdx: ${gPlayerCountIdx}, looking for gPlayerId: ${gPlayerId}`)
   var selectedPlayerRecord = currentOrderedPlayerObjs[gPlayerCountIdx];
   console.log(`appendRoleToPlayerCountIdx#selectedPlayerRecord: ${JSON.stringify(selectedPlayerRecord)}`)
   let currentRole = selectedPlayerRecord["roleKey"];
