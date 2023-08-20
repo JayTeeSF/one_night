@@ -165,7 +165,7 @@ function shuffle(array) {
   }
 }
 
-function _reCacheRandomRoles(res) {
+function _reCacheRandomRoles(res, cb) {
   var gameRecords = JSON.parse(res);
   var gameRecord = gameRecords[0];
   gameRecordId = gameRecord["_id"];
@@ -175,13 +175,17 @@ function _reCacheRandomRoles(res) {
     [name]: role
   });
   // fill rest of assignedRoleObjs by doing a select of the players table, where gameId = gameId and name & roleKey are not null
+  if (cb) {
+    console.log(`_reCacheRandomRoles(...): calling callback after assigning global roleObjs and assignedRolesObjs vars`);
+    cb()
+  }
 }
 
 // only run this if you know what you're doing
-function _fetchRandomRoles() {
+function _fetchRandomRoles(cb) {
   select("games", {
     "gameId": gameId
-  }, _reCacheRandomRoles);
+  }, (res) => { _reCacheRandomRoles(res, cb)});
   //select("games", gameRecordId, {randomRoles: roleObjs}); // set it and forget it
 }
 
@@ -556,7 +560,7 @@ function startGame(doCreate = false) {
     isHost = false;
     numPlayers = null;
     console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: >>${numPlayers}<< (yet)...`);
-    insert("players", generatePlayer(gameId, name), savePlayerIdAndDealRole(name));
+    insert("players", generatePlayer(gameId, name), _fetchRandomRoles(() => {savePlayerIdAndDealRole(name) });
 
   }
 }
