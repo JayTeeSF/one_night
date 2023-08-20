@@ -359,7 +359,7 @@ function appendRoleToPlayerCountIdx(res) {
   console.log(`appendRoleToPlayerCountIdx#currentRole: ${currentRole}`)
 
   if (typeof currentRole == 'undefined' || !currentRole || currentRole == "") {
-    appendRoleToPlayer([selectedPlayerRecord], 1, gPlayerCountIdx);
+    appendRoleToPlayer(currentOrderedPlayerObjs, currentOrderedPlayerObjs.size, gPlayerCountIdx);
   } else {
     console.log(`not assigning role, because currentPlayer already has a role: ${currentRole}`);
   }
