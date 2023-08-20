@@ -560,7 +560,12 @@ function startGame(doCreate = false) {
     isHost = false;
     numPlayers = null;
     console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: >>${numPlayers}<< (yet)...`);
-    insert("players", generatePlayer(gameId, name), _fetchRandomRoles(() => {savePlayerIdAndDealRole(name) });
+    insert("players",
+           generatePlayer(gameId, name),
+           _fetchRandomRoles(() => {
+             savePlayerIdAndDealRole(name)
+           })
+    );
 
   }
 }
