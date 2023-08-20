@@ -327,7 +327,7 @@ function displayRole(roleKey) {
  }, savePlayerId); //logQueryResult);
  */
 function dealRoleTo(somePlayerName, selectedPlayerRecord) {
-  console.log(`dealRoleTo(${somePlayerName}, ${selectedPlayerRecord})...`);
+  console.log(`dealRoleTo(${somePlayerName}, ${JSON.stringify(selectedPlayerRecord)})...`);
   if (typeof selectedPlayerRecord == "undefined") {
   console.log(`randomly assign a role to player named: ${somePlayerName}, after selecing from the 'players' table where the rolKey is unassigned...`);
   select("players", {
@@ -344,7 +344,7 @@ function dealRoleTo(somePlayerName, selectedPlayerRecord) {
 }
 
 function playerHasARole(roleObjAssignment, playerName) {
-  console.log(`playerHasARole(${roleObjAssignment}, ${playerName})...`);
+  console.log(`playerHasARole(${JSON.stringify(roleObjAssignment)}, ${playerName})...`);
   if (typeof (roleObjAssignment[playerName]) == 'undefined' || roleObjAssignment[playerName] == null) {
     return false;
   } else {
@@ -394,15 +394,18 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
   console.log(`appendRoleToPlayer: playerRecords[${idx}]: ${playerRecord}`);
   var playerName = playerRecord["name"];
   var cb;
-
-  if (roleAssignedTo(playerName)) {
-    console.error(`appendRoleToPlayer: Player '${playerName}' already has an assigned role.`);
+  var roleObj = roleAssignedTo(playerName);
+  
+  if (roleObj) {
+    console.error(`appendRoleToPlayer: Player '${playerName}' already has an assigned role: ${JSON.stringify(roleObj)}.`);
   } else {
     console.log(`appendRoleToPlayer: unassignedRoles: ${JSON.stringify(roleObjs)}, assignedRoles: ${JSON.stringify(assignedRoleObjs)}`);
-    var roleObj = roleObjs.shift();
+    roleObj = roleObjs.shift();
     assignedRoleObjs.push({
       [playerName]: roleObj
     });
+  }
+  
     var defaultCallback = getRoleDisplayer(roleObj);
     console.log(`appendRoleToPlayer: Got player row (${JSON.stringify(playerRecord)}), now assigning random role: ${JSON.stringify(roleObj)}...`);
     // a single-line-if goes ahead of the command, in Javascript: if(true) console.log("got true");
