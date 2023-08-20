@@ -447,7 +447,7 @@ function getRoleDisplayer(roleObj) {
 }
 
 function changePlayerCountDisplay(playerCount){
-  console.log(`changeNumPlayers(${playerCount})...`);
+  console.log(`changePlayerCountDisplay(${playerCount})...`);
   document.getElementById("playersIn").innerHTML = `${playerCount} Players`
   console.log(playerCount, typeof playerCount)
 }
