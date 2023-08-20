@@ -629,11 +629,11 @@ function showCards() {
 }
 
 // https://www.sitepoint.com/get-url-parameters-with-javascript/
-function joinGame() {
-  console.log(`joinGame()...`);
+function joinGame(urlGameId) {
+  console.log(`joinGame(${urlGameId})...`);
   setupVars();
-  if (typeof (gameId) != 'undefined' && gameId != null) {
-    gameIdInput.value = gameId;
+  if (typeof (urlGameId) != 'undefined' && urlGameId != null) {
+    gameIdInput.value = urlGameId; // ok if it's still a string
   }
   nameInput ||= document.getElementById("joinNameInput");
 
@@ -693,6 +693,5 @@ var urlGameId = urlParams.get('gameId');
 console.log(` ===== START OF CODE, after grabbing gameId (${urlGameId}) from urlParams ===== `);
 if (typeof (urlGameId) != 'undefined' && urlGameId != null) {
   console.log("automatically advancing to Join Game Screen (to get the player's Name before calling StartGame)...");
-  gameId = Number(urlGameId);
-  joinGame();
+  joinGame(urlGameId);
 }
