@@ -614,7 +614,7 @@ function createGame() {
 
 function showCards() {
   console.log("showCards()...")
-  setupVars();
+  // setupVars(); // should be redundant because createGame & joinGame (the two main entry points) will have already called setupVar()...
   try {
     remove(createGameScreen);
   } catch(e) {
