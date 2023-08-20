@@ -603,8 +603,9 @@ function startGame(doCreate = false) {
              _fetchRandomRoles(
                (ignoredRes2) => {
                  let savePlayerIdCallback = savePlayerIdAndDealRole(name);
-                 console.log(`even though savePlayerIdAndDealRole(name) immediately returns, it supplies a callback ..that needs to be called w/ the generatedPlayerObject: ${generatedPlayerObject}`);
-                   savePlayerIdCallback(generatedPlayerObject);
+                 let gPORes = JSON.stringify(generatedPlayerObject);
+                 console.log(`even though savePlayerIdAndDealRole(name) immediately returns, it supplies a callback ..that needs to be called w/ the generatedPlayerObject: ${gPORes}`);
+                   savePlayerIdCallback(gPORes);
                }
              )
            }
