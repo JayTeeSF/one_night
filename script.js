@@ -177,15 +177,20 @@ function _reCacheRandomRoles(res, cb) {
   // fill rest of assignedRoleObjs by doing a select of the players table, where gameId = gameId and name & roleKey are not null
   if (cb) {
     console.log(`_reCacheRandomRoles(...): calling callback after assigning global roleObjs and assignedRolesObjs vars`);
-    cb()
+    cb();
   }
 }
 
 // only run this if you know what you're doing
 function _fetchRandomRoles(cb) {
+  console.log(`_fetchRandomRoles(cb): selecting the current game using gameRecordId: ${gameRecordId}...`);
   select("games", {
-    "gameId": gameId
-  }, (res) => { _reCacheRandomRoles(res, cb)});
+    gameRecordId
+  }, (res) => {
+    console.log(`_feetchRandomRoles select of the game is being passed to _reCacheRandomRoles(res, cb)...`);
+    _reCacheRandomRoles(res, cb)
+  });
+  // "gameId": gameId
   //select("games", gameRecordId, {randomRoles: roleObjs}); // set it and forget it
 }
 
