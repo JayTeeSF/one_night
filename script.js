@@ -346,11 +346,17 @@ function dealRoleTo(somePlayerName, selectedPlayerRecord) {
 }
 
 function appendRoleToPlayerCountIdx(res) {
+  console.log(`appendRoleToPlayerCountIdx(res)...`);
   var currentPlayerObjs = JSON.parse(res);
   var currentOrderedPlayerObjs = currentPlayerObjs.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+  console.log(`appendRoleToPlayerCountIdx#currentOrderedPlayerObjs: ${JSON.stringify(currentOrderedPlayerObjs)}`)
   gPlayerCountIdx =  currentOrderedPlayerObjs.map(e => e.id).indexOf(gPlayerId);
+  console.log(`appendRoleToPlayerCountIdx#gPlayerCountIdx: ${gPlayerCountIdx}`)
   var selectedPlayerRecord = currentOrderedPlayerObjs[gPlayerCountIdx];
-  let currentRole = selectedPlayerRecord.roleKey;
+  console.log(`appendRoleToPlayerCountIdx#selectedPlayerRecord: ${JSON.stringify(selectedPlayerRecord)}`)
+  let currentRole = selectedPlayerRecord["roleKey"];
+  console.log(`appendRoleToPlayerCountIdx#currentRole: ${currentRole}`)
+
   if (typeof currentRole == 'undefined' || !currentRole || currentRole == "") {
     appendRoleToPlayer([selectedPlayerRecord], 1, gPlayerCountIdx);
   } else {
