@@ -31,10 +31,10 @@ function generateGame(startedAt = currentTimestamp()) {
   };
 }
 
-function generatePlayer(gameId, name=null) {
+function generatePlayer(idOfGame, name=null) {
   name ||= nameInput.value;
   return {
-    "gameId": gameId,
+    "gameId": idOfGame,
     "name": name,
     "isHost": isHost,
   };
@@ -141,7 +141,7 @@ function handleGameInsert(res) {
   
   var gameRecord = JSON.parse(res);
   gameRecordId = gameRecord["_id"];
-  gameId = gameRecord.id;
+  gameId = Number(gameRecord.id);
   console.log(`handleGameInsert(<gameReecordJSON>): GRID${gameRecordId}::::GID:${gameId}`);
   var linkOfGameId = gameId.toString().link(`${window.location}?gameId=${gameId}`)
   gameIdDisplay.innerHTML = linkOfGameId;
@@ -192,7 +192,7 @@ function _reCacheRandomRoles(res, cb) {
 function _fetchRandomRoles(cb) {
   console.log(`_fetchRandomRoles(cb): selecting the current game using gameRecordId (even though we don't have it yet): ${gameRecordId} and gameId: ${gameId}?!...`);
   select("games", {
-     "id": Number(gameId)
+     "id": gameId
   }, (res) => {
     console.log(`_feetchRandomRoles select of the game is being passed to _reCacheRandomRoles(res, cb)...`);
     _reCacheRandomRoles(res, cb)
@@ -260,7 +260,7 @@ function savePlayerId(res, cb) {
   console.log(`savePlayerId(res, cb)...`);
   
   var player = JSON.parse(res);
-  gPlayerId = player._id
+  gPlayerId = Number(player._id);
   console.log(` --> [saving Player Id]: player: ${res}...`);
   if(cb) { 
     console.log(`savePlayerId called w/ cb(<record for ${player['name']}>)...`);
@@ -446,10 +446,10 @@ function getRoleDisplayer(roleObj) {
   };
 }
 
-function changeNumPlayers(numPlayers){
-  console.log(`changeNumPlayers(${numPlayers})...`);
-  document.getElementById("playersIn").innerHTML = `${numPlayers} Players`
-  console.log(numPlayers, typeof numPlayers)
+function changePlayerCountDisplay(playerCount){
+  console.log(`changeNumPlayers(${playerCount})...`);
+  document.getElementById("playersIn").innerHTML = `${playerCount} Players`
+  console.log(playerCount, typeof playerCount)
 }
 
 function seenCard() {
@@ -548,10 +548,10 @@ function countPlayers() {
     (res) => {
       if (JSON.parse(res) == 0) {
         console.log(`res IS EMPTY: ${res}`);
-        changeNumPlayers(0);
+        changePlayerCountDisplay(0);
       } else {
         console.log(`res IS FULL: ${res}`);
-        changeNumPlayers(JSON.parse(res).length);
+        changePlayerCountDisplay(JSON.parse(res).length);
       }
     }
   );
@@ -582,11 +582,11 @@ function startGame(doCreate = false) {
   console.log(`startGame(${doCreate ? 'create' : 'join'}): called show cards`);
   showCards();
   name = nameInput.value;
-  gameId = gameIdInput.value;
+  gameId = Number(gameIdInput.value);
 
   if (doCreate) {
     isHost = true;
-    numPlayers = numPlayersInput.value;
+    numPlayers = Number(numPlayersInput.value);
     console.log(`startGame(true): with ${numPlayers} players, as name: ${name} -- No-gameId: >>${gameId}<< (yet)...`);
     insert("games", generateGame(), handleGameInsert);
   } else {
@@ -629,8 +629,8 @@ function showCards() {
 }
 
 // https://www.sitepoint.com/get-url-parameters-with-javascript/
-function joinGame(gameId) {
-  console.log(`joinGame(${gameId})...`);
+function joinGame() {
+  console.log(`joinGame()...`);
   setupVars();
   if (typeof (gameId) != 'undefined' && gameId != null) {
     gameIdInput.value = gameId;
@@ -689,9 +689,9 @@ function appendRoleToNextPlayer(playerRecords, ct, idx) {
   }
 }
 
-gameId = urlParams.get('gameId');
+gameId = Number(urlParams.get('gameId'));
 console.log(` ===== START OF CODE, after grabbing gameId (${gameId}) from urlParams ===== `);
 if (typeof (gameId) != 'undefined' && gameId != null) {
   console.log("automatically advancing to Join Game Screen (to get the player's Name before calling StartGame)...");
-  joinGame(gameId);
+  joinGame();
 }
