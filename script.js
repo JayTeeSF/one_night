@@ -595,9 +595,19 @@ function startGame(doCreate = false) {
     isHost = false;
     numPlayers = null;
     console.log(`startGame(doCreate=false) (AKA: JoinGame): (gameId: ${gameId}) as name: ${name} -- No-numPlayers: >>${numPlayers}<< (yet)...`);
+    let generatedPlayerObject = generatePlayer(gameId, name);
     insert("players",
-           generatePlayer(gameId, name),
-           (res) => { _fetchRandomRoles( (res) { savePlayerIdAndDealRole(name)(res)} ) }
+           generatedPlayerObject,
+           (ignoreeRes1) => { 
+             console.log(`don't trigger _fetchRandomRoles immediately, wrap it in an anonymous fn, so we can call it with pre-defined values`);
+             _fetchRandomRoles(
+               (ignoredRes2) => {
+                 let savePlayerIdCallback = savePlayerIdAndDealRole(name);
+                 console.log(`even though savePlayerIdAndDealRole(name) immediately returns, it supplies a callback ..that needs to be called w/ the generatedPlayerObject: ${generatedPlayerObject}`);
+                   savePlayerIdCallback(generatedPlayerObject);
+               }
+             )
+           }
     );
 
   }
