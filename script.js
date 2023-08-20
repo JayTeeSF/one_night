@@ -1,5 +1,5 @@
 var gameIdInput, gameRecordId, instructionsAndButtonsElement, numPlayersSpan, gameIdDisplay, playerRecordId, nameInput;
-var gameId, numPlayers, name, db, roleObjs, gPlayerId, isHost;
+var gameId, numPlayers, name, db, roleObjs, gPlayerId, isHost, gPlayerCountIdx, gPlayerRole;
 var gInitialCardDisplayed = false;
 const assignedRoleObjs = [];
 const dbApiCorsKey = "5f0536bca529a1752c476e9a";
@@ -245,7 +245,7 @@ function savePlayerIdAndDealRole(playerName=name) {
 
   var cb = (thePlayer) => { 
     console.log(`in cb* of savePlayerId, as called from savePlayerIdAndDealRole for player: ${playerName}. *Note: cb is dealRoleTo(playerName, thePlayer(obj))...`)
-    dealRoleTo(playerName, thePlayer);
+    dealRoleTo(playerName, thePlayer); // need to know the number of this player (host = 0, next = 1, after_that = 2, etc...)
   };
   console.log(`dealRoleTo bruv: ${playerName}`)
 
@@ -329,18 +329,32 @@ function displayRole(roleKey) {
  */
 function dealRoleTo(somePlayerName, selectedPlayerRecord) {
   console.log(`dealRoleTo(${somePlayerName}, ${JSON.stringify(selectedPlayerRecord)})...`);
-  if (typeof selectedPlayerRecord == "undefined") {
-  console.log(`randomly assign a role to player named: ${somePlayerName}, after selecing from the 'players' table where the rolKey is unassigned...`);
-  select("players", {
-    "gameId": gameId,
-    "name": somePlayerName,
-    "roleKey": {"$exists": false}
-  }, appendRoleToFirstPlayer
-  );
+  // ignoring selectedPlayerRecord ...useless!
+  if (isHost) {
+    console.log(`randomly assign a role to player named: ${somePlayerName}, after selecing from the 'players' table where the rolKey is unassigned...`);
+    select("players", {
+      "gameId": gameId,
+      "name": somePlayerName,
+      "roleKey": {"$exists": false}
+    }, appendRoleToFirstPlayer);
+  } else { // nonHost
+     select("players", {
+       "gameId": gameId
+     }, appendRoleToPlayerCountIdx);
+  }
+    
+}
+
+function appendRoleToPlayerCountIdx(res) {
+  var currentPlayerObjs = JSON.parse(res);
+  var currentOrderedPlayerObjs = currentPlayerObjs.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+  gPlayerCountIdx =  currentOrderedPlayerObjs.map(e => e.id).indexOf(gPlayerId);
+  var selectedPlayerRecord = currentOrderedPlayerObjs[gPlayerCountIdx];
+  let currentRole = selectedPlayerRecord.roleKey;
+  if (typeof currentRole == 'undefined' || !currentRole || currentRole == "") {
+    appendRoleToPlayer([selectedPlayerRecord], 1, gPlayerCountIdx);
   } else {
-  console.log(`randomly assign a role to player named: ${somePlayerName}, using the ALREADY selected object`);
-    // appendRoleToFirstPlayer(selectedPlayerObject);
-    appendRoleToPlayer([selectedPlayerRecord], 1, 0);
+    console.log(`not assigning role, because currentPlayer already has a role: ${currentRole}`);
   }
 }
 
@@ -401,12 +415,13 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
     console.error(`appendRoleToPlayer: Player '${playerName}' already has an assigned role: ${JSON.stringify(roleObj)}.`);
   } else {
     console.log(`appendRoleToPlayer: unassignedRoles: ${JSON.stringify(roleObjs)}, assignedRoles: ${JSON.stringify(assignedRoleObjs)}`);
-    roleObj = roleObjs.shift();
+    roleObj = roleObjs[idx]; // use same idx to assign the role to this player!
     assignedRoleObjs.push({
       [playerName]: roleObj
     });
   }
-  
+  gPlayerRole = roleObj;
+
     var defaultCallback = getRoleDisplayer(roleObj);
     console.log(`appendRoleToPlayer: Got player row (${JSON.stringify(playerRecord)}), now assigning random role: ${JSON.stringify(roleObj)}...`);
     // a single-line-if goes ahead of the command, in Javascript: if(true) console.log("got true");
@@ -430,7 +445,8 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
       callbackChain,
       (res) => {
         console.log(`**** (JT: IS THIS THE FAIL CALLBACK? (if so, re-call 'appendRoleToPlayer(${JSON.stringify(playerRecords)}, ${ct}, ${idx}, <cbBuilder>)' after removeRoleAssignmentFor(playerName) In Callback for appendRoleToPlayer's call to update the player table... ****`);
-        removeRoleAssignmentFor(playerName)
+        removeRoleAssignmentFor(playerName);
+        // appendRoleToPlayer(playerRecords, ct, idx + 1, cbBuilder); // try the next role in the list ?! (maybe)
       }
     );
 }
