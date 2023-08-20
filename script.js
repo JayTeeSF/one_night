@@ -8,6 +8,7 @@ const windowQs = window.location.search;
 const urlParams = new URLSearchParams(windowQs);
 
 function setupVars() {
+  console.log(`setupVars()...`);
   instructionsAndKickoffScreen = document.getElementById("instructionsAndKickoffScreen");
   createGameScreen = document.getElementById("createGameScreen");
   joinGameScreen = document.getElementById("joinGameScreen");
@@ -136,6 +137,8 @@ function update(tableName, rowId, data, callback, badcallback) {
 }
 
 function handleGameInsert(res) {
+  console.log(`handleGameInsert(res)...`);
+  
   var gameRecord = JSON.parse(res);
   gameRecordId = gameRecord["_id"];
   gameId = gameRecord.id;
@@ -166,6 +169,8 @@ function shuffle(array) {
 }
 
 function _reCacheRandomRoles(res, cb) {
+  console.log(`_reCacheRandomRoles(res, cb)...`);
+
   var gameRecords = JSON.parse(res);
   var gameRecord = gameRecords[0];
   gameRecordId = gameRecord["_id"];
@@ -195,6 +200,8 @@ function _fetchRandomRoles(cb) {
 }
 
 function setupRoles(res) {
+  console.log(`setupRoles(res)...`);
+
   var values = JSON.parse(res);
   shuffle(values); // roles.random
   const roles = values.slice(0, numPlayers); // limit(numPlayers)
@@ -229,10 +236,16 @@ function setupRoles(res) {
 }
 
 function savePlayerIdAndDealRole(playerName=name) {
-  var cb = (thePlayer) => { dealRoleTo(playerName, thePlayer); };
+  console.log(`savePlayerIdAndDealRole(${playerName})...`);
+
+  var cb = (thePlayer) => { 
+    console.log(`in cb* of savePlayerId, as called from savePlayerIdAndDealRole for player: ${playerName}. *Note: cb is dealRoleTo(playerName, thePlayer(obj))...`)
+    dealRoleTo(playerName, thePlayer);
+  };
   console.log(`dealRoleTo bruv: ${playerName}`)
 
   return (res) => {
+    console.log(`callback that's about to trigger savePlayerId(res, cb(aka dealRoleTo(playerName...))...`)
     savePlayerId(res, cb);
   }
 }
@@ -242,14 +255,14 @@ function logQueryResult(res) {
 }
 
 function savePlayerId(res, cb) {
+  console.log(`savePlayerId(res, cb)...`);
+  
   var player = JSON.parse(res);
   gPlayerId = player._id
   console.log(` --> [saving Player Id]: player: ${res}...`);
   if(cb) { 
     console.log(`savePlayerId called w/ cb(<record for ${player['name']}>)...`);
     cb(player);
-  } else {
-    console.log(">>>> savePlayerId: missing callback ...this should NOT still happen <<<<");
   }
 }
 
@@ -259,6 +272,7 @@ function displayMyRole(roleKey) {
 */
 
 function cardNameToFileName(cardName) {
+  console.log(`cardNameToFileName(${cardName})...`);
   if (cardName.includes(" ")) {
     var cardWords = cardName.split(" ")
     var retVal = `/one_night/assets/images/${cardWords[0].toLowerCase()}${cardWords[1]}.jpg`;
@@ -273,6 +287,7 @@ function cardNameToFileName(cardName) {
 }
 
 function displayRole(roleKey) {
+  console.log(`displayRole(${roleKey})...`);
   if (! gInitialCardDisplayed) {
     select("Roles", {"key": roleKey}, (res) => {
       if (res.length === 0) {
@@ -308,6 +323,7 @@ function displayRole(roleKey) {
  }, savePlayerId); //logQueryResult);
  */
 function dealRoleTo(somePlayerName, selectedPlayerRecord) {
+  console.log(`dealRoleTo(${somePlayerName}, ${selectedPlayerRecord})...`);
   if (typeof selectedPlayerRecord == "undefined") {
   console.log(`randomly assign a role to player named: ${somePlayerName}, after selecing from the 'players' table where the rolKey is unassigned...`);
   select("players", {
@@ -324,6 +340,7 @@ function dealRoleTo(somePlayerName, selectedPlayerRecord) {
 }
 
 function playerHasARole(roleObjAssignment, playerName) {
+  console.log(`playerHasARole(${roleObjAssignment}, ${playerName})...`);
   if (typeof (roleObjAssignment[playerName]) == 'undefined' || roleObjAssignment[playerName] == null) {
     return false;
   } else {
@@ -332,12 +349,14 @@ function playerHasARole(roleObjAssignment, playerName) {
 }
 
 function roleAssignedTo(playerName) {
+  console.log(`roleAssignedTo(${playerName})...`);
   return assignedRoleObjs.some((obj) => {
     return playerHasARole(obj, playerName)
   }); // not sure the retun here is needed
 }
 
 function removeRoleAssignmentFor(playerName) {
+  console.log(`removeRoleAssignmentFor(${playerName})...`);
   var idx = assignedRoleObjs.findIndex((obj) => {
     return playerHasARole(obj, playerName)
   }); // SURE the retun here IS needed
@@ -351,6 +370,7 @@ function removeRoleAssignmentFor(playerName) {
 }
 
 function appendRoleToPlayers(res, cbBuilder=null) {
+  console.log(`appendRoleToPlayers(res, cbBuilder)...`);
   var playerRecords = JSON.parse(res);
   console.log(`playerRecords: ${playerRecords}`);
   appendRoleToPlayer(playerRecords, playerRecords.length, 0, cbBuilder)
@@ -365,6 +385,7 @@ function appendRoleToFirstPlayer(res) {
 }
 
 function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
+  console.log(`appendRoleToPlayer(playerRecords, ct, idx, cbBuilder)...`);
   var playerRecord = playerRecords[idx];
   console.log(`appendRoleToPlayer: playerRecords[${idx}]: ${playerRecord}`);
   var playerName = playerRecord["name"];
@@ -408,6 +429,7 @@ function appendRoleToPlayer(playerRecords, ct, idx, cbBuilder=null) {
 }
 
 function getRoleDisplayer(roleObj) {
+  console.log(`getRoleDisplayer(roleObj)...`);
   var role = roleObj["roleKey"]
   console.log("about to add role and image");
   document.getElementById("cardName").innerHTML = role;
@@ -423,11 +445,13 @@ function getRoleDisplayer(roleObj) {
 }
 
 function changeNumPlayers(numPlayers){
+  console.log(`changeNumPlayers(${numPlayers})...`);
   document.getElementById("playersIn").innerHTML = `${numPlayers} Players`
   console.log(numPlayers, typeof numPlayers)
 }
 
 function seenCard() {
+  console.log(`seenCard()...`);
   if (typeof playerRecord == 'undefined') {
     var playerRecord = -1;
   }
@@ -473,6 +497,7 @@ function countdownTimeout(num) {
 }
 
 function countdown(num) {
+  console.log(`countdown(${num})...`);
   if (num == 0) {
     remove(displayCardScreen);
     display(countdownPage);
@@ -490,6 +515,7 @@ function countdown(num) {
 }
 
 function checkGameStart() {
+  console.log(`checkGameStart()...`);
   select(
     "players",
     {
@@ -513,6 +539,7 @@ function checkGameStart() {
 }
 
 function countPlayers() {
+  console.log(`countPlayers()...`);
   select(
     "players",
     {
@@ -531,6 +558,7 @@ function countPlayers() {
 }
   
 function addRolesToPlayers() {
+  console.log(`addRolesToPlayers()...`);
   select(
     "players",
     {
@@ -551,8 +579,8 @@ function addRolesToPlayers() {
 }
 
 function startGame(doCreate = false) {
-  showCards();
   console.log(`startGame(${doCreate ? 'create' : 'join'}): called show cards`);
+  showCards();
   name = nameInput.value;
   gameId = gameIdInput.value;
 
@@ -576,6 +604,7 @@ function startGame(doCreate = false) {
 }
 
 function createGame() {
+  console.log(`createGame()...`);
   setupVars();
   nameInput ||= document.getElementById("createNameInput");
 
@@ -584,7 +613,7 @@ function createGame() {
 }
 
 function showCards() {
-  console.log("inside show cards")
+  console.log("showCards()...")
   setupVars();
   try {
     remove(createGameScreen);
@@ -601,7 +630,7 @@ function showCards() {
 
 // https://www.sitepoint.com/get-url-parameters-with-javascript/
 function joinGame(gameId) {
-  console.log(`----------> UNEXPECTED CALL (needs to be removed): joinGame(${gameId}) ...calling setupVars()... <---------`);
+  console.log(`joinGame(${gameId})...`);
   setupVars();
   if (typeof (gameId) != 'undefined' && gameId != null) {
     gameIdInput.value = gameId;
@@ -641,6 +670,7 @@ async function sleepThenAddRolesToPlayers() {
 
 // FIXME: change loop to compare # of roles in the game w/ number of rows in player table for this gameId, that HAVE a name & role defined...
 function appendRoleToNextPlayer(playerRecords, ct, idx) {
+  console.log(`appendRoleToNextPlayer(playerRecords, ct, idx)...`);
   if ((ct > 0) && ((idx + 1) <= ct) && (playerRecords[idx + 1])) {
     return (res) => {
       console.log(`** appendingRoleToPlayer #${idx + 1}/${ct}: ${JSON.stringify(playerRecords[idx + 1])} **`);
@@ -660,6 +690,7 @@ function appendRoleToNextPlayer(playerRecords, ct, idx) {
 }
 
 gameId = urlParams.get('gameId');
+console.log(` ===== START OF CODE, after grabbing gameId (${gameId}) from urlParams ===== `);
 if (typeof (gameId) != 'undefined' && gameId != null) {
   console.log("automatically advancing to Join Game Screen (to get the player's Name before calling StartGame)...");
   joinGame(gameId);
