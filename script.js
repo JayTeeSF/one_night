@@ -262,7 +262,7 @@ function savePlayerId(res, cb) {
   console.log(`savePlayerId(res, cb)...`);
   
   var player = JSON.parse(res);
-  gPlayerId ||= Number(player._id);
+  gPlayerId = Number(player._id);
   console.log(` --> [saving Player Id]: player: ${res}...`);
   if(cb) { 
     console.log(`savePlayerId called w/ cb(<record for ${player['name']}>)...`);
