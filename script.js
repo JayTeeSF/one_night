@@ -137,7 +137,7 @@ function update(tableName, rowId, data, callback, badcallback) {
 }
 
 function handleGameInsert(res) {
-  console.log(`handleGameInsert(res)...`);
+  console.log(`handleGameInsert(res): adds game info link to screen then calls setupRoles`);
   
   var gameRecord = JSON.parse(res);
   gameRecordId = gameRecord["_id"];
@@ -169,7 +169,7 @@ function shuffle(array) {
 }
 
 function _reCacheRandomRoles(res, cb) {
-  console.log(`_reCacheRandomRoles(${res}, cb)...`);
+  console.log(`_reCacheRandomRoles(${res}, cb <-- setup nonHost player)...`);
 
   var gameRecords = JSON.parse(res);
   console.log(`_reCacheRandomRoles: gameRecords: ${JSON.stringify(gameRecords)}`)
@@ -183,18 +183,20 @@ function _reCacheRandomRoles(res, cb) {
   });
   // fill rest of assignedRoleObjs by doing a select of the players table, where gameId = gameId and name & roleKey are not null
   if (cb) {
-    console.log(`_reCacheRandomRoles(): (which extracted gameRecordId: ${gameRecordId}) is calling callback after assigning global roleObjs and assignedRolesObjs vars`);
+    console.log(`_reCacheRandomRoles(): (which extracted gameRecordId: ${gameRecordId}) is calling callback (to setup nonHost player) after assigning global roleObjs and assignedRolesObjs vars`);
     cb();
+  } else {
+    console.log(`_reCacheRandomRoles(): NO Callback found!!!`);
   }
 }
 
 // only run this if you know what you're doing
 function _fetchRandomRoles(cb) {
-  console.log(`_fetchRandomRoles(cb): selecting the current game using gameRecordId (even though we don't have it yet): ${gameRecordId} and gameId: ${gameId}?!...`);
+  console.log(`_fetchRandomRoles(cb <-- this setups up nonHost player): selecting the current game using (numeric) gameId: ${gameId}...`);
   select("games", {
      "id": gameId
   }, (res) => {
-    console.log(`_feetchRandomRoles select of the game is being passed to _reCacheRandomRoles(res, cb)...`);
+    console.log(`_fetchRandomRoles selected game is being passed to _reCacheRandomRoles(res, cb <-- this setups up the nonHost player)...`);
     _reCacheRandomRoles(res, cb)
   });
   // "gameId": gameId
@@ -202,7 +204,7 @@ function _fetchRandomRoles(cb) {
 }
 
 function setupRoles(res) {
-  console.log(`setupRoles(res)...`);
+  console.log(`setupRoles(res): will insert the host player and deal that player a role.`);
 
   var values = JSON.parse(res);
   shuffle(values); // roles.random
