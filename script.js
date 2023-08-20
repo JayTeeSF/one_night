@@ -169,10 +169,12 @@ function shuffle(array) {
 }
 
 function _reCacheRandomRoles(res, cb) {
-  console.log(`_reCacheRandomRoles(res, cb)...`);
+  console.log(`_reCacheRandomRoles(${res}, cb)...`);
 
   var gameRecords = JSON.parse(res);
+  console.log(`_reCacheRandomRoles: gameRecords: ${JSON.stringify(gameRecords)}`)
   var gameRecord = gameRecords[0];
+  console.log(`_reCacheRandomRoles: gameRecord: ${gameRecord}`)
   gameRecordId = gameRecord["_id"];
   roleObjs = gameRecord["randomRoles"];
   var role = roleObjs.shift();
