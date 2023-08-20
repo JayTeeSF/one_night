@@ -689,9 +689,10 @@ function appendRoleToNextPlayer(playerRecords, ct, idx) {
   }
 }
 
-gameId = Number(urlParams.get('gameId'));
-console.log(` ===== START OF CODE, after grabbing gameId (${gameId}) from urlParams ===== `);
-if (typeof (gameId) != 'undefined' && gameId != null) {
+var urlGameId = urlParams.get('gameId');
+console.log(` ===== START OF CODE, after grabbing gameId (${urlGameId}) from urlParams ===== `);
+if (typeof (urlGameId) != 'undefined' && urlGameId != null) {
   console.log("automatically advancing to Join Game Screen (to get the player's Name before calling StartGame)...");
+  gameId = Number(urlGameId);
   joinGame();
 }
