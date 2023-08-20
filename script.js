@@ -181,16 +181,16 @@ function _reCacheRandomRoles(res, cb) {
   });
   // fill rest of assignedRoleObjs by doing a select of the players table, where gameId = gameId and name & roleKey are not null
   if (cb) {
-    console.log(`_reCacheRandomRoles(...): calling callback after assigning global roleObjs and assignedRolesObjs vars`);
+    console.log(`_reCacheRandomRoles(): (which extracted gameRecordId: ${gameRecordId}) is calling callback after assigning global roleObjs and assignedRolesObjs vars`);
     cb();
   }
 }
 
 // only run this if you know what you're doing
 function _fetchRandomRoles(cb) {
-  console.log(`_fetchRandomRoles(cb): selecting the current game using gameRecordId: ${gameRecordId}...`);
+  console.log(`_fetchRandomRoles(cb): selecting the current game using gameRecordId (even though we don't have it yet): ${gameRecordId} and gameId: ${gameId}?!...`);
   select("games", {
-    gameRecordId
+     "gameId": gameId
   }, (res) => {
     console.log(`_feetchRandomRoles select of the game is being passed to _reCacheRandomRoles(res, cb)...`);
     _reCacheRandomRoles(res, cb)
@@ -452,25 +452,23 @@ function changeNumPlayers(numPlayers){
 
 function seenCard() {
   console.log(`seenCard()...`);
+  var pR, gPI, gRI;
   if (typeof playerRecord == 'undefined') {
-    var playerRecord = -1;
+    pR = -1;
+  } else {
+    pR = playerRecord;
   }
   if (typeof gPlayerId == 'undefined') {
-  var gPlayerId = -1;
+    gPI = -1;
+  } else {
+    gPI = gPlayerId;
   }
   if (typeof gameRecordId == 'undefined') {
-  gameRecordId = -1;
+    gRI = -1;
+  } else {
+  gRI = gameRecordId;
   }
- console.log(`****seenCard(): about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${playerRecord["_id"]}, gPlayerId: ${gPlayerId}, gameRecordId: ${gameRecordId} ****`);
-  if(playerRecord == -1) {
-    playerRecord = null;
-  }
-    if(gPlayerId == -1) {
-    gPlayerId = null;
-  }
-    if(gameRecordId == -1) {
-    gameRecordId = null;
-  }
+ console.log(`****seenCard(): about to update the player table w/ pRId: ${playerRecordId} & gId: ${gameId} // pR[id]: ${pR["_id"]}, gPlayerId: ${gPI}, gameRecordId: ${gRI} ****`);
  
   update("players",
         playerRecordId,
